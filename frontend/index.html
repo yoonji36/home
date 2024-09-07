@@ -1,0 +1,32 @@
+<!-- 이미지 업로드 페이지 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 업로드</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>내 냉장고 리스트</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Recommend</a></li>
+                <li><a href="#">User</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <h2>이미지 업로드</h2>
+        <input type="file" id="imageUpload" accept="image/*" />
+        <button onclick="recognizeIngredients()">재료 인식</button>
+        <div id="errorMessage"></div>
+    </main>
+
+    <script src="js/upload.js"></script>
+</body>
+</html>
