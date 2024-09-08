@@ -10,6 +10,7 @@ def main_page(request):
 def image_upload(request):
     if request.method == 'POST':
         image_file = request.FILES['image']
+
         # 이미지를 저장
         file_name = default_storage.save(image_file.name, image_file)
         image_path = default_storage.path(file_name)

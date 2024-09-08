@@ -38,9 +38,11 @@ INSTALLED_APPS = [ # ★★★★★
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'app',
     'main',
-    'mdl'
+    'mdl',
+    'login',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +53,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+INTERNAL_IPS = ['127.0.0.1']  # Localhost에서만 작동하도록 설정
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -103,6 +108,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = 'main-page'  # 로그인 후 리다이렉트될 URL 이름
+LOGOUT_REDIRECT_URL = 'login-page'  # 로그아웃 후 리다이렉트될 URL 이름
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
