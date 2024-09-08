@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 가입</title>
+</head>
+<body>
+    <h2>회원 가입</h2>
+
+    <!-- action 경로를 수정: /signup/ -> /login/signup/ 또는 {% url 'signup-page' %} -->
+    <form action="{% url 'signup-page' %}" method="POST">
+        {% csrf_token %}
+        <label for="username">ID:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="height">키 (cm):</label>
+        <input type="text" id="height" name="height" required>
+        <label for="weight">몸무게 (kg):</label>
+        <input type="text" id="weight" name="weight" required>
+        <label for="bloodPressure">혈압:</label>
+        <input type="text" id="bloodPressure" name="bloodPressure" required>
+        <button type="submit">회원 가입</button>
+    </form>
+</body>
+</html>
