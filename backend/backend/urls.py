@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('mdl/', include('mdl.urls')), #mdl 앱의 URL 패턴 포함
     path('', include('main.urls')), # main-PAGE-URL
 ]

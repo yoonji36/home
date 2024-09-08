@@ -12,13 +12,21 @@
     <header>
         <h1>인식된 재료 리스트</h1>
     </header>
-
-    <main>
+    <ul>
+        {% for ingredient in ingredients %}
+            <li>{{ ingredient }}</li>
+        {% empty %}
+            <li>No ingredients detected.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'image-upload' %}">다시 이미지 인식하기</a>
+    
+    <!-- <main>
         <ul id="ingredientsList"></ul>
         <input type="text" id="newIngredient" placeholder="재료 추가" />
         <button onclick="addIngredient()">추가</button>
         <button onclick="nextPage()">다음</button>
-    </main>
+    </main> -->
 
     <script src="js/ingredients.js"></script>
 </body>
