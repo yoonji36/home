@@ -129,12 +129,20 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    os.path.join('C:/home/frontend/css'), # ★★★★★
-    os.path.join('C:/home/frontend/js'), # ★★★★★
+    os.path.join(BASE_DIR, 'C:/home/frontend/css'), # ★★★★★
+    os.path.join(BASE_DIR, 'C:/home/frontend/js'), # ★★★★★
+    os.path.join(BASE_DIR, 'C:/home/frontend/image')
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
 
 
 # Default primary key field type

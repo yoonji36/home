@@ -1,6 +1,12 @@
 from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage  # default_storage 임포트
 from django.core.files.base import ContentFile
+from django.utils import timezone
+from django.core.cache import cache
+from django.http import JsonResponse
+import requests, os, logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -19,3 +25,6 @@ def image_upload(request):
         return redirect('process_image', image_path=file_name)
     
     return render(request, 'image-upload.html')
+
+def index(request):
+    return render(request, 'index.html')  # 'main/index.html' 파일이 있어야 합니다.

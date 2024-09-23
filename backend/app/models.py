@@ -11,7 +11,6 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name
 
-
 class Recipe(models.Model):
     name = models.CharField(max_length=200)
     sodium = models.FloatField()   # 나트륨 함량

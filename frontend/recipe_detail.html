@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ recipe.title }}</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2d6a4f;
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2d6a4f;
+            margin-top: 30px;
+        }
+
+        ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        img {
+            display: block;
+            margin: 30px auto;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 600px) {
+            main {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>{{ recipe.title }}</h1>
+</header>
+
+<main>
+    <!-- 이미지 경로를 템플릿에서 직접 사용 -->
+    <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" style="width:300px;height:300px;">
+    <h2>재료</h2>
+    <ul>
+        {% for ingredient in recipe.ingredients %}
+            <li>{{ ingredient }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>만드는 법</h2>
+    <p>{{ recipe.instructions }}</p>
+
+</main>
+
+<footer>
+    <p>© 2024 혈당히어로 gotchA! 당뇨병 건강관리 헬스케어 웹사이트 제작</p>
+    <p>all rights reserved.</p>
+</footer>
+
+</body>
+</html>
