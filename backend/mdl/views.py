@@ -4,6 +4,11 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from ultralytics import YOLO
+from rest_framework import generics
+from .models import Recipe
+from .serializers import RecipeSerializer
+from django.http import JsonResponse
+import requests
 import json
 import pathlib
 import torch  # YOLOv5 사용
@@ -55,49 +60,26 @@ def delete_ingredient(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-def recipe_list(request):
-    # 필요시 데이터를 여기서 처리하고 템플릿에 전달할 수 있습니다.
-    return render(request, 'recipe_list.html')
 
-RECIPES = {
-    1: {
-        'title': '계란 토마토 당근 볶음',
-        'ingredients': ['계란 2개', '토마토 1개', '당근 1/2개', '양파 1/4개 (선택 사항)', '소금, 후추, 올리브 오일'],
-        'instructions': '''1. 당근과 양파를 얇게 썰어 준비합니다.
-                            2. 토마토는 먹기 좋은 크기로 썰어둡니다.
-                            3. 팬에 올리브 오일을 두르고 당근과 양파를 볶다가, 어느 정도 익으면 토마토를 넣고 볶습니다.
-                            4. 계란을 잘 풀어서 소금, 후추로 간을 한 후 팬에 부어 다른 재료와 함께 볶습니다.
-                            5. 모든 재료가 익으면 불을 끄고 그릇에 담아 완성합니다.''',
-        'image': 'recipe01.jpg',  # 이미지 경로 추가
-        'image_url': '/static/images/recipe01.jpg',  # 이미지 경로
-    },
-    2: {
-        'title': '계란 토마토 당근 스크램블',
-        'ingredients': ['계란 3개', '토마토 1개', '당근 1/4개', '우유 2큰술 (선택 사항)', '소금, 후추, 올리브 오일'],
-        'instructions': '''1. 계란을 그릇에 넣고 우유를 첨가한 후 잘 섞어줍니다.
-                            2. 토마토와 당근을 작게 다집니다.
-                            3. 팬에 올리브 오일을 두르고 당근을 먼저 볶은 후 토마토를 넣고 살짝 볶습니다.
-                            4. 그 위에 계란물을 부어 스크램블 하듯 저어줍니다.
-                            5. 소금과 후추로 간을 맞추고 접시에 담아 완성합니다.''',
-        'image': 'recipe02.jpg',  # 이미지 경로 추가
-        'image_url': '/static/images/recipe02.jpg',  # 이미지 경로
-    },
-    3: {
-        'title': '계란 토마토 당근 오믈렛',
-        'ingredients': ['계란 2개', '토마토 1개', '당근 1/4개', '치즈 (선택 사항)', '소금, 후추, 올리브 오일'],
-        'instructions': '''1. 토마토와 당근을 작게 썰어 준비합니다.
-                            2. 계란을 잘 풀어 소금과 후추로 간을 합니다.
-                            3. 팬에 올리브 오일을 두르고 토마토와 당근을 살짝 볶은 후, 계란물을 부어줍니다.
-                            4. 치즈를 계란 위에 올려줍니다.
-                            5. 계란이 반쯤 익으면 반으로 접어 오믈렛 모양을 만듭니다.
-                            6. 약한 불에서 익혀 완성합니다.''',
-        'image': 'recipe03.jpg',  # 이미지 경로 추가
-        'image_url': '/static/images/recipe03.jpg',  # 이미지 경로
-    }
-}
-
+@csrf_exempt
 def recipe_list(request):
-    return render(request, 'recipe_list.html')
+    try:
+        api_key = '71ea164165cc493aa7f6'
+        service_id = 'COOKRCP01'
+        data_type = 'json'  # 'json' 형식을 명시적으로 설정
+        start_idx = 1
+        end_idx = 10
+
+        url = f'http://openapi.foodsafetykorea.go.kr/api/{api_key}/{service_id}/{data_type}/{start_idx}/{end_idx}'
+        response = requests.get(url)
+        data = response.json()  # XML이 아닌 JSON을 사용하여 응답을 가져옴
+
+        # 필요한 데이터만 추출하여 반환
+        recipes = data.get('COOKRCP01', {}).get('row', [])
+        return JsonResponse({'recipes': recipes}, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
 
 def recipe_detail(request, recipe_id):
     recipe = RECIPES.get(recipe_id)
@@ -107,4 +89,3 @@ def recipe_detail(request, recipe_id):
         return render(request, 'recipe_detail.html', {'recipe': recipe})
     else:
         return render(request, '404.html')
-    

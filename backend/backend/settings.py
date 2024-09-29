@@ -38,11 +38,14 @@ INSTALLED_APPS = [ # ★★★★★
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'debug_toolbar',
+    'corsheaders',
     'app',
     'main',
     'mdl',
     'login',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +57,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True # 모든 도메인에서 접근 허용
 
 INTERNAL_IPS = ['127.0.0.1']  # Localhost에서만 작동하도록 설정
 
@@ -63,7 +69,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'C:/home/frontend')], # ★★★★★
+        'DIRS': [os.path.join(BASE_DIR, 'backend/static')], # ★★★★★
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,9 +135,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
+    BASE_DIR / 'backend/static',
     os.path.join(BASE_DIR, 'C:/home/frontend/css'), # ★★★★★
     os.path.join(BASE_DIR, 'C:/home/frontend/js'), # ★★★★★
-    os.path.join(BASE_DIR, 'C:/home/frontend/image')
+    os.path.join(BASE_DIR, 'C:/home/frontend/image') # ★★★★★
 ]
 
 MEDIA_URL = '/media/'

@@ -22,3 +22,10 @@ def parse_recipe_xml(xml_data):
         "main_image_url": main_image_url,  # 추가된 이미지 URL
         "mk_image_url": mk_image_url,      # 추가된 이미지 URL
     }
+
+# 조리방법 JSON으로 저장
+class Recipe(models.Model):
+    name = models.CharField(max_length=255)
+    image_url = models.URLField()
+    ingredients = models.TextField()
+    cooking_steps = models.JSONField()  # 조리 방법을 JSON으로 저장
