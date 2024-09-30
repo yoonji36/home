@@ -1,0 +1,96 @@
+body {
+    background-color: #f0f4f9;
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .header-section {
+    background-color: #e3f2fd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    height: 33vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .welcome-text {
+    font-size: 1.5rem;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    height: 66%;
+    width: 33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .button {
+    background-color: #42b883;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .logout-button {
+    background-color: #e57373;
+  }
+  
+  .recipe-button {
+    background-color: #ffa726;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .main-content {
+    padding: 30px 20px;
+    flex: 1;
+  }
+  
+  .card-custom {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-title {
+    color: #42b883;
+    font-size: 1.5rem;
+  }
+  
+  .card-text {
+    color: #555;
+  }
+  
+  footer {
+    background-color: #f0f4f9;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+  }

@@ -60,7 +60,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True # 모든 도메인에서 접근 허용
+CORS_ALLOW_ALL_ORIGINS = True
 
 INTERNAL_IPS = ['127.0.0.1']  # Localhost에서만 작동하도록 설정
 

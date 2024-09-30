@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './styles.css';  // CSS 파일 import
 
 const ImageUpload = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -20,6 +19,7 @@ const ImageUpload = () => {
     formData.append('image', selectedImage);
 
     try {
+      // Django의 recognize-ingredients API를 호출합니다.
       const response = await axios.post('/api/recognize-ingredients/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -27,10 +27,12 @@ const ImageUpload = () => {
       });
 
       if (response.data.ingredients) {
+        // 식재료 정보가 성공적으로 응답되면 다음 페이지로 이동하며 데이터를 전달합니다.
         navigate('/ingredients', { state: { ingredients: response.data.ingredients } });
       }
     } catch (error) {
       console.error('Error uploading image:', error);
+      // 에러 페이지로 이동
       navigate('/error');
     }
   };

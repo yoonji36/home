@@ -1,3 +1,9 @@
+# django rest-framework
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import JsonResponse
+
 from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage  # default_storage 임포트
 from django.core.files.base import ContentFile
@@ -8,23 +14,7 @@ import requests, os, logging
 
 logger = logging.getLogger(__name__)
 
-# Create your views here.
-
-def main_page(request):
-    return render(request, 'index.html')
-
-def image_upload(request):
-    if request.method == 'POST':
-        image_file = request.FILES['image']
-
-        # 이미지를 저장
-        file_name = default_storage.save(image_file.name, image_file)
-        image_path = default_storage.path(file_name)
-        
-        # mdl 앱으로 이미지 경로 전달
-        return redirect('process_image', image_path=file_name)
-    
-    return render(request, 'image-upload.html')
-
-def index(request):
-    return render(request, 'index.html')  # 'main/index.html' 파일이 있어야 합니다.
+class WelcomeView(APIView):
+    def get(self, request):
+        user_id = request.user.id if request.user.is_authenticated else 'Guest'
+        return Response({'message': f'Welcome, {user_id}!'}, status=status.HTTP_200_OK)
