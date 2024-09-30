@@ -38,14 +38,21 @@ INSTALLED_APPS = [ # ★★★★★
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'rest_framework',
     'debug_toolbar',
     'corsheaders',
+=======
+    'debug_toolbar',
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
     'app',
     'main',
     'mdl',
     'login',
+<<<<<<< HEAD
     'api',
+=======
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
 ]
 
 MIDDLEWARE = [
@@ -57,11 +64,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+<<<<<<< HEAD
     'corsheaders.middleware.CorsMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+=======
+]
+
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
 INTERNAL_IPS = ['127.0.0.1']  # Localhost에서만 작동하도록 설정
 
 ROOT_URLCONF = 'backend.urls'
@@ -69,7 +81,11 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+<<<<<<< HEAD
         'DIRS': [os.path.join(BASE_DIR, 'backend/static')], # ★★★★★
+=======
+        'DIRS': [os.path.join(BASE_DIR, 'C:/Users/admin/hero/heroproj2024/frontend')], # ★★★★★
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,15 +151,21 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
+<<<<<<< HEAD
     BASE_DIR / 'backend/static',
     os.path.join(BASE_DIR, 'C:/home/frontend/css'), # ★★★★★
     os.path.join(BASE_DIR, 'C:/home/frontend/js'), # ★★★★★
     os.path.join(BASE_DIR, 'C:/home/frontend/image') # ★★★★★
+=======
+    os.path.join('C:/Users/admin/hero/heroproj2024/frontend/css'), # ★★★★★
+    os.path.join('C:/Users/admin/hero/heroproj2024/frontend/js'), # ★★★★★
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+<<<<<<< HEAD
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -151,6 +173,8 @@ CACHES = {
     }
 }
 
+=======
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

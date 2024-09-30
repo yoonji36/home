@@ -1,5 +1,6 @@
 from django.db import models
 
+<<<<<<< HEAD
 import xml.etree.ElementTree as ET
 
 def parse_recipe_xml(xml_data):
@@ -29,3 +30,6 @@ class Recipe(models.Model):
     image_url = models.URLField()
     ingredients = models.TextField()
     cooking_steps = models.JSONField()  # 조리 방법을 JSON으로 저장
+=======
+# Create your models here.
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649

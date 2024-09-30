@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 페이지</title>
+    <!-- Django의 static 태그를 사용하여 정적 파일 불러오기 -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <div class="welcome-section">
+            <!-- 로그인 상태에 따라 다른 UI를 렌더링 -->
+            {% if user.is_authenticated %}
+                <div class="user-info">
+                    <p><strong>{{ user.username }}님</strong> 안녕하세요!</p>
+                    
+                    <!-- POST 방식으로 로그아웃 -->
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Logout</button>
+                    </form>
+                    
+                </div>
+                <div class="menu-buttons">
+                    <a href="{% url 'my-records' %}" class="btn">나의 기록</a>
+                    <a href="{% url 'create-recipe' %}" class="btn">레시피 만들기</a>
+                </div>
+            {% else %}
+                <a href="{% url 'login-page' %}" class="btn">로그인</a>
+                <a href="{% url 'signup-page' %}" class="btn">회원가입</a>
+            {% endif %}
+        </div>
+    </header>
+    
+    <main>
+        <h2>소개글</h2>
+        <div class="intro-section">
+            <p>당신의 냉장고에 있는 재료들로 맛있는 레시피를 만들어 보세요!</p>
+        </div>
+
+        <h2>당뇨 최신 뉴스</h2>
+        <div class="news-section">
+            <p>여기에 당뇨 관련 최신 뉴스를 표시하세요.</p>
+        </div>
+    </main>
+
+    <!-- JavaScript 파일 경로 수정 -->
+    <script src="{% static 'js/upload.js' %}"></script>
+</body>
+</html>

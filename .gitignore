@@ -6,6 +6,7 @@ db.sqlite3-journal
 # Python
 venv/
 __pycache__/
+<<<<<<< HEAD
 backend/mdl/yolov5
 
 # react
@@ -38,3 +39,6 @@ Thumbs.db
 *.swo
 *.tmp
 
+=======
+backend/mdl/yolov5
+>>>>>>> 5dce980497d8ab786192f2bbd4b21caac0025649
