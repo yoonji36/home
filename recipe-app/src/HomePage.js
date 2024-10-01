@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './HomePage.css'; // HomePage.css 파일을 import
+import './css/HomePage.css'; // HomePage.css 파일을 import
 
 const HomePage = () => {
   const [userId, setUserId] = useState('');
