@@ -1,12 +1,15 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
-from .views import WelcomeView
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    # API 경로
+    # API 경로 설정
     path('login/', views.login_api, name='login-api'),  # 로그인 API 엔드포인트
-    path('signup/', views.signup_api, name='signup-api'),  # 회원가입 API 엔드포인트
+    path('login/signup/', views.signup_api, name='signup-api'),  # 회원가입 API 엔드포인트
 
-    # 다른 기존 URL 패턴들도 여기에 추가
-    path('homepage/', WelcomeView.as_view(), name='main-page'),  # 메인 페이지로 리다이렉트 시 사용할 경로 예시
+    # 메인 페이지 경로
+    path('main/', TemplateView.as_view(template_name='index.html'), name='main-page'),
+
+    # React SPA를 위해 모든 페이지 요청을 index.html로 연결 (가장 마지막에 위치해야 합니다)
+    re_path(r'^.*$', TemplateView.as_view(template_name='recipe-app/build/index.html'), name='react-app'),
 ]

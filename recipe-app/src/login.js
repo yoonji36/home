@@ -5,18 +5,33 @@ import axios from 'axios';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/login/', { username, password });
+      // CSRF 토큰 가져오기
+      const csrftoken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+
+      const response = await axios.post('/login/', { username, password }, {
+        headers: {
+          'X-CSRFToken': csrftoken,
+        }
+      });
+
       if (response.data.success) {
         navigate('/main');
+      } else {
+        setError('로그인 실패. 아이디 또는 비밀번호를 확인하세요.');
       }
     } catch (error) {
       console.error('Error during login:', error);
+      setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -27,6 +42,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <h1>로그인</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="username" className="form-label">아이디:</label>

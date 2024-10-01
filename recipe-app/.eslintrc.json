@@ -19,6 +19,7 @@
     ],
     "rules": {
       "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
       "no-undef": "off" // 사용자가 정의되지 않았다는 경고를 무시하도록 설정
     }
   }

@@ -19,6 +19,9 @@ from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect
 
+
+# config - 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),  # Django Debug Toolbar
@@ -27,5 +30,5 @@ urlpatterns = [
     path('main/', include('main.urls')), # 메인페이지 URL
     path('login/', include('login.urls')),  # 로그인 및 회원가입
     path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),  # 로그아웃 후 로그인 페이지로 리다이렉트
-
 ]
+

@@ -14,8 +14,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -26,7 +25,7 @@ SECRET_KEY = 'django-insecure--^i)_4rpsjduc$ze&xq&fszt8^t^k-+(rl)bith63mi(-i@$(e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '172.23.208.1']
 
 
 # Application definition
@@ -60,7 +59,27 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "x-csrftoken",
+    "authorization",
+    "accept",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # 로컬 React 개발 서버
+    "http://172.23.208.1:3000"  # Docker 등에서 사용되는 React 개발 서버 IP 주소
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",  # 로컬 React 개발 서버
+    "http://172.23.208.1:3000"  # Docker 환경 등에서 React 개발 서버
+]
+
+CSRF_COOKIE_HTTPONLY = False  # 반드시 False로 설정하여 JS에서 접근 가능하도록 합니다.
+CSRF_COOKIE_SECURE = False  # 개발 단계에서는 False로 설정 (HTTPS 사용 시 True)
 
 INTERNAL_IPS = ['127.0.0.1']  # Localhost에서만 작동하도록 설정
 
@@ -69,7 +88,9 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'backend/static')], # ★★★★★
+        'DIRS': [
+            os.path.join((BASE_DIR), 'recipe-app', 'build')  # 빌드된 React 파일 경로 수정
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,7 +112,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',  # 데이터베이스 백엔드 엔진 (기본은 SQLite3)
-        'NAME': BASE_DIR / 'db.sqlite3',         # 데이터베이스 파일 경로 (프로젝트 루트에 생성)
+        'NAME': os.path.join(BASE_DIR, 'backend', 'db.sqlite3'),         # 데이터베이스 파일 경로 (프로젝트 루트에 생성)
     }
 }
 
@@ -135,14 +156,15 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'backend/static',
-    os.path.join(BASE_DIR, 'C:/home/frontend/css'), # ★★★★★
-    os.path.join(BASE_DIR, 'C:/home/frontend/js'), # ★★★★★
-    os.path.join(BASE_DIR, 'C:/home/frontend/image') # ★★★★★
+    os.path.join(BASE_DIR, 'recipe-app', 'build', 'static'),  # 빌드된 정적 파일 경로 수정
+    os.path.join(BASE_DIR, 'backend', 'static'),  # 프로젝트의 정적 리소스를 저장하는 폴더 (상대 경로로 올바르게 지정)
+    'C:/home/frontend/css',  # 절대 경로를 직접 지정
+    'C:/home/frontend/image',  # 절대 경로를 직접 지정
 ]
 
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'backend', 'media')
 
 CACHES = {
     'default': {
