@@ -5,7 +5,9 @@ from django.views.generic import TemplateView
 urlpatterns = [
     # API 경로 설정
     path('login/', views.login_api, name='login-api'),  # 로그인 API 엔드포인트
-    path('login/signup/', views.signup_api, name='signup-api'),  # 회원가입 API 엔드포인트
+    path('signup/', views.signup_api, name='signup-api'),  # 회원가입 API 엔드포인트
+    path('csrf_token_view/', views.csrf_token_view, name='csrf-token-view'),  # CSRF 토큰 뷰
+    path('get-csrf-token/', views.get_csrf_token, name='get-csrf-token'),
 
     # 메인 페이지 경로
     path('main/', TemplateView.as_view(template_name='index.html'), name='main-page'),

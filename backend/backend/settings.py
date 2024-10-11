@@ -61,19 +61,16 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = [
-    "content-type",
-    "x-csrftoken",
-    "authorization",
-    "accept",
-]
+CORS_ALLOW_HEADERS = ['Content-Type', 'X-CSRFToken']
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
     "http://localhost:3000",  # 로컬 React 개발 서버
     "http://172.23.208.1:3000"  # Docker 등에서 사용되는 React 개발 서버 IP 주소
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
     "http://localhost:3000",  # 로컬 React 개발 서버
     "http://172.23.208.1:3000"  # Docker 환경 등에서 React 개발 서버
 ]
@@ -176,3 +173,34 @@ CACHES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_COOKIE_SECURE = False  # 개발 환경에서는 False, 프로덕션에서는 True
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+SESSION_COOKIE_SECURE = False  # 개발 환경에서는 False, 프로덕션에서는 True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # DEBUG 레벨 이상의 로그를 콘솔에 출력
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {  # Django 관련 로그
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'login': {  # 'login' 앱의 로그 (signup_api 뷰 함수 포함)
+            'handlers': ['console'],
+            'level': 'DEBUG',  # DEBUG 레벨 이상의 로그를 콘솔에 출력
+            'propagate': False,
+        },
+    },
+}

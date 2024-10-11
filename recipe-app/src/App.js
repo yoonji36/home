@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import ImageUpload from './image-upload';
@@ -9,15 +9,28 @@ import HomePage from './HomePage'; // 홈 화면을 위한 컴포넌트
 import PrivateRoute from './PrivateRoute'; // PrivateRoute 컴포넌트 import
 
 function App() {
+  const [isAuthenticated] = useState(false); // 인증 상태 관리
+
   return (
     <Router>
       <Routes>
-      <Route path="/" element={<Navigate to ="/login" />} /> {/* 기본 URL이 로그인 페이지로 */}
+        <Route path="/" element={<Navigate to ="/login" />} /> {/* 기본 URL이 로그인 페이지로 */}
+        
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/image-upload" element={<PrivateRoute isAuthenticated={true} component={<ImageUpload />} />} />
-        <Route path="/ingredients" element={<PrivateRoute isAuthenticated={true} component={<Ingredients />} />} />
-        <Route path="/main" element={<PrivateRoute isAuthenticated={true} component={<HomePage />} />} />
+
+        <Route 
+          path="/image-upload" 
+          element={<PrivateRoute isAuthenticated={isAuthenticated} element={<ImageUpload />} />} 
+        />
+        <Route 
+          path="/ingredients" 
+          element={<PrivateRoute isAuthenticated={isAuthenticated} element={<Ingredients />} />} 
+        />
+        <Route 
+          path="/main" 
+          element={<PrivateRoute isAuthenticated={isAuthenticated} element={<HomePage />} />} 
+        />
       </Routes>
     </Router>
   );

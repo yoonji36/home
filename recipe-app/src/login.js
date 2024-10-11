@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,32 +8,64 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // CSRF 토큰 가져오기
+    axios.get('http://localhost:8000/login/get-csrf-token/', { withCredentials: true });
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      // CSRF 토큰 가져오기
-      const csrftoken = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('csrftoken='))
-        ?.split('=')[1];
-
-      const response = await axios.post('/login/', { username, password }, {
-        headers: {
-          'X-CSRFToken': csrftoken,
+      const response = await axios.post('http://localhost:8000/login/login/', 
+        { username, password },
+        {
+          withCredentials: true,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
         }
-      });
-
+      );
+        
       if (response.data.success) {
-        navigate('/main');
+        localStorage.setItem('isAuthenticated', 'true');
+        
+        if (response.data.user_id !== undefined) {
+          localStorage.setItem('userId', response.data.user_id.toString());
+          localStorage.setItem('username', response.data.username);
+        } else {
+          console.warn('Warning: user_id not received from server');
+        }
+        
+        const redirectUrl = '/main';
+        navigate(redirectUrl);
       } else {
         setError('로그인 실패. 아이디 또는 비밀번호를 확인하세요.');
       }
     } catch (error) {
       console.error('Error during login:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+      }
       setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
+
+  // CSRF 토큰을 쿠키에서 가져오는 함수
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 
   const goToSignup = () => {
     navigate('/signup');

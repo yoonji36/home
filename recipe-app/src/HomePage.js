@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './css/HomePage.css'; // HomePage.css 파일을 import
+import './HomePage.css'; // HomePage.css 파일을 import
 
 const HomePage = () => {
   const [userId, setUserId] = useState('');
@@ -40,13 +40,13 @@ const HomePage = () => {
         <div className="welcome-text">
           <span>{userId} 님, 환영합니다!</span>
           <div className="buttons">
-            <button onClick={handleMyProfile} className="button">나의 기록</button>
+            <button onClick={handleMyProfile} className="button">내 기록</button>
             <button onClick={handleLogout} className="button logout-button">로그아웃</button>
           </div>
         </div>
 
         {/* 레시피 만들기 버튼 */}
-        <button onClick={handleRecipeCreate} className="recipe-button">레시피 만들기</button>
+        <button onClick={handleRecipeCreate} className="recipe-button">레시피 생성</button>
       </div>
 
       {/* 메인 콘텐츠 */}
