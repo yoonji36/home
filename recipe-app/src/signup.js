@@ -92,9 +92,9 @@ const Signup = () => {
           'X-CSRFToken': csrfToken,
         },
       });
-  
+
       console.log("Response received:", response);
-  
+
       // 로그: 요청 보내기 직전
       console.log("Sending POST request to /login/signup/ with headers:", {
         'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ const Signup = () => {
       if (response.data.success) {
         console.log('회원 가입 성공:', response.data);
         alert('회원 가입에 성공하였습니다.');
-        navigate('/main');
+        navigate('/main/');
       } else {
         console.error('회원 가입 실패:', response.data.message);
         alert(response.data.message);

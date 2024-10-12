@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://localhost:8000/login/login/', 
+      const response = await axios.post('http://localhost:8000/login/', 
         { username, password },
         {
           withCredentials: true,
@@ -29,16 +29,13 @@ const Login = () => {
         
       if (response.data.success) {
         localStorage.setItem('isAuthenticated', 'true');
-        
         if (response.data.user_id !== undefined) {
           localStorage.setItem('userId', response.data.user_id.toString());
           localStorage.setItem('username', response.data.username);
+          navigate('/main/');
         } else {
           console.warn('Warning: user_id not received from server');
         }
-        
-        const redirectUrl = '/main';
-        navigate(redirectUrl);
       } else {
         setError('로그인 실패. 아이디 또는 비밀번호를 확인하세요.');
       }

@@ -7,5 +7,5 @@ def redirect_to_image_upload(request):
     return HttpResponseRedirect('/image-upload/')
 
 urlpatterns = [
-    path('homepage/', WelcomeView.as_view(), name='welcome-api'),  # 기본 경로로 index 뷰를 연결
+    path('main/', WelcomeView.as_view(), name='welcome-api'),  # 기본 경로로 index 뷰를 연결
 ]

@@ -12,13 +12,12 @@ from django.views.decorators.http import require_http_methods
 import logging
 logger = logging.getLogger(__name__)
 
-# 로그인 페이지 렌더링 시 CSRF 쿠키 설정
+# CSRF 토큰을 제공하는 뷰
 @ensure_csrf_cookie
 def csrf_token_view(request):
     token = get_token(request)
     return JsonResponse({'csrfToken': token}, status=200)
 
-# 로그인 API
 # 로그인 API
 @csrf_protect
 def login_api(request):
@@ -34,7 +33,7 @@ def login_api(request):
                 return JsonResponse({
                     'success': True,
                     'message': '로그인 성공',
-                    'redirect_url': '/HomePage',
+                    'redirect_url': '/main/',
                     'user_id': user.id,
                     'username': user.username
                 })
@@ -59,14 +58,16 @@ def login_view(request):
         return JsonResponse({
             'success': True,
             'message': '로그인 성공',
-            'redirect_url': '/HomePage',
+            'redirect_url': '/main/',
             'user_id': user.id,
             'username': user.username
         })
     else:
         return JsonResponse({'success': False, 'message': '로그인 실패'}, status=400)
 
+
 # 회원가입 API
+@csrf_protect
 def signup_api(request):
     if request.method == "POST":
         try:
