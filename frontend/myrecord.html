@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>혈당히어로 - 레시피 보관함</title>
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    
+    <style>
+        /* LOTTERIACHAB 폰트 임포트 */
+        @font-face {
+            font-family: 'LOTTERIACHAB';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/LOTTERIACHAB.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(254, 252, 218);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: rgb(60, 173, 143);
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            color: black;
+            align-items: center;
+            height: 10vh;
+        }
+
+        .logo a {
+            font-family: 'LOTTERIACHAB', sans-serif;
+            font-size: 2.5rem;
+            color: black;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+        }
+
+        nav a {
+            color: black;
+            text-decoration: none;
+            font-family: 'LOTTERIACHAB', sans-serif;
+        }
+
+        nav a:focus, nav a:active, .logo a:focus, .logo a:active {
+            color: white;
+        }
+
+        .logout-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        main {
+            display: flex;
+            height: 90vh;
+            padding: 20px;
+            justify-content: space-between;
+            align-items: flex-start; /* 하단에 정렬 */
+        }
+
+        .calendar {
+            width: 48%;
+            background-color: #fff;
+            padding: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: calc(100% - 20px); /* 여백 제외한 전체 높이 */
+        }
+        
+        /* 캘린더 전체 박스 크기는 유지하면서 내부의 캘린더 크기만 줄임 */
+        .fc {
+            transform: scale(0.9); /* 캘린더 내용 크기를 90%로 줄임 */
+            transform-origin: top center; /* 상단 가운데를 기준으로 축소 */
+            align-items: center;
+        }
+
+        .fc-toolbar, .fc-header-toolbar, .fc-daygrid {
+            width: 100%; /* 전체 너비를 유지 */
+        }
+
+        /* 캘린더 셀의 패딩 및 높이 조정 */
+        .fc-daygrid-day-frame {
+            padding: 2px; /* 셀 안의 패딩을 줄여 셀 크기를 작게 만듭니다 */
+            height: 77px; /* 셀 높이를 조정하여 크기를 맞춤 */
+            overflow: hidden; /* 셀 안에 내용이 넘칠 경우 숨깁니다 */
+
+        }
+
+        /* 날짜 숫자 크기 조정 */
+        .fc-daygrid-day-number {
+            font-size: 0.8rem; /* 날짜 숫자 크기 줄이기 */
+            padding-top: 3px; /* 날짜 숫자의 상단 여백 조정 */
+        }
+
+        /* 이벤트 텍스트 크기 조정 */
+        .fc-daygrid-event {
+            font-size: 0.3rem; /* 이벤트 텍스트 크기 줄이기 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 레시피 보관함 */
+        .recipe-storage {
+            width: 48%;
+            background-color: #fff;
+            padding: 20px;
+            margin-right: 20px;
+            margin-left: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: calc(100% - 20px); /* 여백 제외한 전체 높이 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤 추가 */
+            position: relative; /* 제목 위치 설정을 위해 position을 relative로 설정 */
+        }
+
+        .recipe-storage ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* 레시피 보관함 제목 스타일 추가 */
+        .recipe-title {
+            font-family: 'LOTTERIACHAB', sans-serif;
+            font-size: 5rem;
+            color: rgb(60, 173, 143);
+            text-align: center;
+            margin-top: 20px;
+        }
+
+       /* 레시피 리스트 스타일 */
+        .recipe-list-container {
+            border: 2px solid rgb(60, 173, 143);
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        .recipe-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recipe-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            position: relative; /* 삭제 버튼 위치 설정을 위해 relative 사용 */
+        }
+
+        .recipe-checkbox {
+            margin-right: 10px;
+        }
+
+        .recipe-title-text {
+            flex-grow: 1; /* 레시피 제목이 가능한 공간을 차지하도록 */
+            text-align: left;
+        }
+
+        .delete-button {
+            display: none; /* 기본적으로 숨겨진 상태 */
+            position: absolute;
+            right: 10px; /* 레시피 아이템의 오른쪽 끝에 위치 */
+            background-color: rgb(60, 173, 143);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .recipe-checkbox:checked + .recipe-title-text + .delete-button {
+            display: inline-block; /* 체크박스가 선택되었을 때 삭제 버튼 보이기 */
+        }
+
+        .delete-button:hover {
+            background-color: rgb(50, 150, 130);
+        }
+
+       /* 모달 스타일 수정 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* 중앙으로 이동 */
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* 모달 스타일 수정 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* 화면 중앙으로 이동 */
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 모달 내용 스타일 수정 */
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 600px; /* 모달 너비를 고정 */
+            max-width: 90%; /* 최대 너비를 화면의 90%로 제한 */
+            max-height: 80%; /* 최대 높이를 화면의 80%로 제한 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤 추가 */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        /* 표의 크기를 모달에 맞게 조정 */
+        table {
+            width: 100%; /* 표를 모달 너비에 맞춤 */
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px;
+        }
+
+        /* 입력 필드의 테두리 및 스타일 제거 */
+        input[type="text"] {
+            border: none; /* 테두리 제거 */
+            outline: none; /* 선택 시 기본 강조 효과 제거 */
+            background-color: transparent; /* 배경색을 투명하게 설정 */
+            text-align: center; /* 텍스트를 가운데 정렬 */
+            font-size: 1rem; /* 입력 필드의 폰트 크기 설정 */
+        }
+
+        /* 버튼 스타일 조정 */
+        .button {
+            padding: 5px 15px; /* 버튼 크기 줄이기 */
+            border: none;
+            background-color: rgb(60, 173, 143);
+            color: white;
+            font-size: 0.9rem; /* 폰트 크기 줄이기 */
+            cursor: pointer;
+            margin: 0 5px; /* 버튼 간의 간격을 줄임 */
+        }
+
+        /* 버튼에 호버 효과 추가 */
+        .button:hover {
+            background-color: rgb(50, 150, 130);
+        }
+
+        /* 버튼을 가운데에 정렬하기 위한 스타일 */
+        .button-container {
+            display: flex;
+            justify-content: center; /* 버튼을 가운데 정렬 */
+            margin-top: 10px; /* 버튼과 표 간격 추가 */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="#">혈당히어로</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">레시피 생성</a></li>
+                <li><a href="#">내 기록</a></li>
+                <li><a href="#">내 정보</a></li>
+                <li><a href="#"><img src="logout.png" alt="로그아웃 아이콘" class="logout-icon"></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="calendar">
+            <!-- FullCalendar 캘린더를 표시할 div -->
+            <div id="calendar"></div>
+        </section>
+
+        <section class="recipe-storage">
+            <ul>
+                <h2 class="recipe-title">레시피 보관함</h2>
+            
+                <div class="recipe-list-container">
+                    <ul class="recipe-list">
+                        <div class>
+                            <ul class="recipe-list">
+                                <!-- 여기에는 나중에 API를 통해 데이터를 받아와 리스트 항목을 추가할 예정입니다. -->
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                                <li class="recipe-item">
+                                    <input type="checkbox" class="recipe-checkbox">
+                                    <span>레시피 제목 예시</span>
+                                    <button class="delete-button">삭제</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+            </ul>
+        </section>
+    </main>
+
+    <!-- 모달 창 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>식단</th>
+                        <th>혈당</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>공복</td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <td>아침</td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <td>점심</td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>                     
+                    </tr>
+                    <tr>
+                        <td>저녁</td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>                     
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 버튼 컨테이너 추가 -->
+            <div class="button-container">
+                <button class="button" id="saveBtn">등록</button>
+                <button class="button" id="deleteBtn">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var modal = document.getElementById('modal');
+            var currentClickedDate = null; // 현재 클릭된 날짜를 저장
+            var records = {}; // 날짜별 기록을 저장하는 객체
+
+            // 페이지 로드 시 모달을 강제로 닫아둠
+            modal.style.display = "none";
+
+            // FullCalendar 인스턴스 생성
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                height: 'auto',
+                dateClick: function(info) {
+                    currentClickedDate = info.dateStr; // 클릭한 날짜를 저장
+
+                    // 클릭한 날짜에 이미 기록이 있는 경우 모달에 데이터 채우기
+                    if (records[currentClickedDate]) {
+                        document.querySelectorAll('.modal-content tbody input').forEach((input, index) => {
+                            input.value = records[currentClickedDate][index] || '';
+                        });
+                    } else {
+                        // 새로운 기록의 경우 입력 필드를 비우기
+                        document.querySelectorAll('.modal-content tbody input').forEach((input) => {
+                            input.value = '';
+                        });
+                    }
+
+                    // 모달 창을 띄움 (날짜 칸을 클릭할 때만)
+                    modal.style.display = "flex";
+                },
+                events: [] // 초기에는 이벤트가 없으므로 빈 배열로 설정
+            });
+
+            calendar.render();
+
+            // 모달 닫기 기능 (모달 바깥 클릭 시 닫힘)
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+
+            // 등록 버튼 이벤트 핸들러 (저장)
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                var inputs = document.querySelectorAll('.modal-content tbody input');
+                var inputData = Array.from(inputs).map(input => input.value.trim());
+
+                // 현재 클릭된 날짜에 입력 데이터 저장
+                if (currentClickedDate) {
+                    // 입력 데이터가 모두 비어 있지 않은지 확인하여 기록 저장
+                    if (inputData.some(value => value !== '')) {
+                        records[currentClickedDate] = inputData;
+
+                        // 기존 이벤트가 있으면 삭제
+                        var existingEvent = calendar.getEvents().find(event => event.startStr === currentClickedDate);
+                        if (existingEvent) {
+                            existingEvent.remove();
+                        }
+
+                        // 새로운 이벤트 추가
+                        calendar.addEvent({
+                            title: '',
+                            start: currentClickedDate,
+                            allDay: true
+                        });
+
+                        alert('기록이 저장되었습니다.');
+                    } else {
+                        alert('기록이 비어있어 저장되지 않았습니다.');
+                    }
+                }
+
+                modal.style.display = "none";
+            });
+
+            // 삭제 버튼 이벤트 핸들러
+            document.getElementById('deleteBtn').addEventListener('click', function() {
+                if (currentClickedDate && records[currentClickedDate]) {
+                    delete records[currentClickedDate];
+
+                    // 해당 날짜의 이벤트 삭제
+                    var existingEvent = calendar.getEvents().find(event => event.startStr === currentClickedDate);
+                    if (existingEvent) {
+                        existingEvent.remove();
+                    }
+
+                    alert('기록이 삭제되었습니다.');
+                }
+
+                modal.style.display = "none";
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 모든 체크박스를 가져옴
+            const checkboxes = document.querySelectorAll('.recipe-checkbox');
+
+            // 각 체크박스에 이벤트 리스너 추가
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const listItem = this.parentElement; // 해당 체크박스가 속한 리스트 아이템
+                    const deleteButton = listItem.querySelector('.delete-button');
+
+                    // 체크박스가 체크되면 삭제 버튼 보이기
+                    if (this.checked) {
+                        deleteButton.style.display = 'inline-block';
+                    } else {
+                        deleteButton.style.display = 'none';
+                    }
+                });
+            });
+
+            // 모든 삭제 버튼을 가져옴
+            const deleteButtons = document.querySelectorAll('.delete-button');
+
+            // 각 삭제 버튼에 이벤트 리스너 추가
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const listItem = this.parentElement; // 해당 버튼이 속한 리스트 아이템
+                    listItem.remove(); // 리스트 아이템 삭제
+                });
+            });
+        });
+    </script>
+</body>
+</html>
