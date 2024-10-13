@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>혈당히어로 - 당뇨병 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        body {
+            background-color: #f0f4f9;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 화면 전체 높이 */
+        }
+
+        /* 전체 페이지 레이아웃 */
+        .header-section {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            height: 33vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 환영 텍스트 박스 */
+        .welcome-text {
+            font-size: 1.5rem;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            height: 66%;
+            width: 33%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 버튼 스타일 */
+        .welcome-text .buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .welcome-text .buttons a, .welcome-text .buttons button {
+            background-color: #42b883;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .welcome-text .buttons a.logout {
+            background-color: #e57373;
+        }
+
+        .recipe-btn {
+            background-color: #ffa726;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            padding: 30px 20px;
+            flex: 1; /* 메인 콘텐츠가 남은 공간을 차지하게 설정 */
+        }
+
+        .card-custom {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #42b883;
+            font-size: 1.5rem;
+        }
+
+        .card-text {
+            color: #555;
+        }
+
+        footer {
+            background-color: #f0f4f9;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .welcome-text {
+                width: 50%;
+            }
+
+            .recipe-btn {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-text {
+                width: 70%;
+            }
+
+            .recipe-btn {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 메인 섹션 상단 -->
+<div class="container header-section">
+    <!-- 사용자 환영 메시지 -->
+    <div class="welcome-text">
+        <span>{{ request.user.username }} 님, 환영합니다!</span>
+        <div class="buttons">
+            <a href="/my-profile" class="btn-custom">나의 기록</a>
+            <a href="/logout" class="btn-logout logout">로그아웃</a>
+        </div>
+    </div>
+
+    <!-- 레시피 만들기 버튼 -->
+    <a href="{% url 'image-upload' %}" class="recipe-btn">레시피 만들기</a>
+</div>
+
+<!-- 메인 콘텐츠 -->
+<div class="container main-content">
+    <!-- 신규 글 카드 -->
+    <div class="card card-custom">
+        <div class="card-body">
+            <h5 class="card-title">신규 글</h5>
+            <p class="card-text">여기에 신규 글 내용을 추가합니다. 최신 글이 이곳에 표시됩니다.</p>
+        </div>
+    </div>
+
+    <!-- 당첨자 뉴스 카드 -->
+    <div class="card card-custom">
+        <div class="card-body">
+            <h5 class="card-title">당첨자 뉴스</h5>
+            <p class="card-text">당첨자 관련 뉴스는 여기에 표시됩니다. 최신 정보를 업데이트하세요.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2024 혈당히어로 gotchA! 당뇨병 건강관리 헬스케어 웹사이트 제작</p>
+    <p>all rights reserved.</p>
+</footer>
+
+<!-- JavaScript for redirect -->
+<script>
+    document.getElementById('recipeBtn').addEventListener('click', function() {
+        window.location.href = 'image-upload.html';
+    });
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
