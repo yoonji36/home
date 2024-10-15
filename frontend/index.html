@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOW MEAL</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    
+    <style>
+        body {
+            background-color: #f9f9f9;
+        }
+
+        /* 화면의 상단 1/3을 차지하도록 header-section 높이 조정 */
+        .header-section {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: 33vh; /* 화면의 상단 1/3을 차지하도록 설정 */
+            display: flex;
+            align-items: center; /* 세로 중앙 정렬 */
+            justify-content: space-between; /* 좌우로 정렬 */
+        }
+
+        /* welcome-text 박스 크기 조정 및 버튼 포함 */
+        .welcome-text {
+            font-size: 1.5rem;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            height: 66%; /* header-section의 2/3 높이 */
+            width: 33%; /* 전체 width의 1/3 차지 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* welcome-text 내부의 버튼 스타일 */
+        .welcome-text .buttons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px; /* 버튼 간격 조정 */
+        }
+
+        .welcome-text .buttons a, .welcome-text .buttons button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .welcome-text .buttons a.logout {
+            background-color: #f44336;
+        }
+
+        /* 레시피 만들기 버튼 스타일 */
+        .header-section .recipe-btn {
+            margin-left: auto;
+            background-color: #ffcc00;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .card-custom {
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-custom:hover, .btn-logout:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 메인 섹션 상단 -->
+    <div class="container header-section">
+        <!-- 크기가 커진 welcome-text 내부에 버튼 추가 -->
+        <div class="welcome-text">
+            <span>{{ request.user.username }} 님 안녕하세요!</span>
+            <div class="buttons">
+                <a href="/my-profile" class="btn-custom">나의 기록</a>
+                <a href="/logout" class="btn-logout">Log Out</a>
+            </div>
+        </div>
+
+        <!-- 우측 정렬된 레시피 만들기 버튼 -->
+        <a href="{% url 'image-upload' %}" class="recipe-btn">레시피 만들기</a>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="container main-content">
+        <!-- 신규 글 카드 -->
+        <div class="card card-custom">
+            <div class="card-body">
+                <h5 class="card-title">신규 글</h5>
+                <p class="card-text">여기에 신규 글 내용을 추가합니다. 최신 글이 이곳에 표시됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 당첨자 뉴스 카드 -->
+        <div class="card card-custom">
+            <div class="card-body">
+                <h5 class="card-title">당첨자 뉴스</h5>
+                <p class="card-text">당첨자 관련 뉴스는 여기에 표시됩니다. 최신 정보를 업데이트하세요.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for redirect -->
+    <script>
+        document.getElementById('recipeBtn').addEventListener('click', function() {
+            window.location.href = 'image-upload.html';  // 버튼 클릭 시 페이지 이동
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html>

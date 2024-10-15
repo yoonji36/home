@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재료 리스트</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .ingredient-list {
+            margin-top: 20px;
+        }
+
+        .ingredient-item {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-ingredient-section {
+            margin-top: 20px;
+        }
+
+        .btn-custom {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-custom:hover, .btn-delete:hover {
+            opacity: 0.8;
+        }
+
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>재료 리스트</h1>
+    
+    <!-- 재료 리스트 (체크박스 추가) -->
+    <form id="ingredient-form"  action="{% url 'make-recipe' %}" method="POST">
+        <ul id="ingredient-list" class="ingredient-list">
+            {% for ingredient in ingredients %}
+            <li class="ingredient-item">
+                <input type="checkbox" class="ingredient-checkbox" value="{{ ingredient }}" name="ingredient-list" checked >
+                <label><br>{{ ingredient }}</label>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- 삭제 버튼 -->
+        <button type="button" id="delete-ingredient-btn" class="btn btn-delete">선택항목 삭제</button>
+		<button type="submit" class="btn btn-custom">선택된 재료로 나만의 레시피 만들기</button>
+    </form>
+
+    <!-- 재료 추가 버튼 및 입력 필드 -->
+    <div class="add-ingredient-section">
+        <button id="add-ingredient-btn" class="btn btn-custom">재료 추가</button>
+        <div id="ingredient-input-container" style="display: none;">
+            <input type="text" id="new-ingredient" class="form-control my-2" placeholder="재료를 입력하세요">
+            <button id="submit-ingredient-btn" class="btn btn-primary">추가하기</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (Popper.js 포함) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addIngredientBtn = document.getElementById('add-ingredient-btn');
+        const ingredientInputContainer = document.getElementById('ingredient-input-container');
+        const submitIngredientBtn = document.getElementById('submit-ingredient-btn');
+        const ingredientList = document.getElementById('ingredient-list');
+        const newIngredientInput = document.getElementById('new-ingredient');
+        const deleteIngredientBtn = document.getElementById('delete-ingredient-btn');
+
+        // "재료 추가" 버튼 클릭 시 입력 필드 보이기
+        addIngredientBtn.addEventListener('click', function () {
+            ingredientInputContainer.style.display = 'block';
+        });
+
+        // "추가하기" 버튼 클릭 시 리스트에 재료 추가
+        submitIngredientBtn.addEventListener('click', function () {
+            const newIngredient = newIngredientInput.value.trim();
+            
+            if (newIngredient) {
+                // 새 재료를 리스트에 추가
+                const newListItem = document.createElement('li');
+                newListItem.classList.add('ingredient-item');
+                newListItem.innerHTML = `<input type="checkbox" class="ingredient-checkbox" value="${newIngredient}"  name="ingredient-list" checked> <label>${newIngredient}</label>`;
+                ingredientList.appendChild(newListItem);
+
+                // 서버로 새 재료 전송 (Ajax 사용)
+                fetch('{% url "add_ingredient" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ ingredient: newIngredient })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        newIngredientInput.value = ''; // 입력 필드 초기화
+                        ingredientInputContainer.style.display = 'none'; // 입력 필드 숨기기
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+
+        // "삭제" 버튼 클릭 시 선택된 재료 삭제
+        deleteIngredientBtn.addEventListener('click', function () {
+            const checkboxes = document.querySelectorAll('.ingredient-checkbox:checked');
+            const ingredientsToDelete = Array.from(checkboxes).map(checkbox => checkbox.value);
+
+            if (ingredientsToDelete.length > 0) {
+                // 서버로 삭제 요청 보내기
+                fetch('{% url "delete_ingredient" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ ingredients: ingredientsToDelete })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 성공하면 리스트에서 선택된 항목들 삭제
+                        checkboxes.forEach(checkbox => checkbox.parentElement.remove());
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

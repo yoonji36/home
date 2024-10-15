@@ -1,0 +1,9 @@
+# Django
+db.sqlite3
+db.sqlite3-journal
+
+
+# Python
+venv/
+__pycache__/
+backend/mdl/yolov5
