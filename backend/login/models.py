@@ -9,7 +9,7 @@ class Profile(models.Model):
     height = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # 키
     weight = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # 몸무게
     bmi = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # bmi
-    blood_pressure = models.CharField(max_length=5, decimal_places=2, null=True, blank=True)  # 혈압
+    blood_pressure = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # 혈압
 
     #def __str__(self):
       #  return self.user.username
