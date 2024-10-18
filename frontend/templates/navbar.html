@@ -1,0 +1,31 @@
+<!-- templates/navbar.html -->
+<style>
+.navbar {
+    background-color: rgb(60, 173, 143); /* 메뉴바 색상 */
+    font-family: 'LOTTERIACHAB'; /* 메뉴바에 폰트 적용 */
+    font-size: 1.75rem;
+    font-weight: 100;
+    padding: 10px 20px;
+    height: 10vh;
+}
+</style>
+
+<nav class="navbar" style="background-color: #5aa469; padding: 15px;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="#">혈당히어로</a>
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/' %}text-white{% else %}text-dark{% endif %}" href="/">레시피 생성</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/records/' %}text-dark{% else %}text-white{% endif %}" href="/records/">내 기록</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/info/' %}text-dark{% else %}text-white{% endif %}" href="/info/">내 정보</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#"><img src="logout.png" alt="로그아웃 아이콘" style="width: 30px;"></a>
+            </li>
+        </ul>
+    </div>
+</nav>
