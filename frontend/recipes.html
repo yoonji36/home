@@ -110,7 +110,6 @@
           <!-- 로그아웃 버튼 이미지 -->
           <li class="nav-item logout-icon ms-3">
             <a href="#">
-                <img src="{% static 'images/logout_icon.png' %}" alt="로그아웃" class="img-fluid">
             </a>
           </li>
         </ul>
@@ -130,45 +129,64 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="recipe-section text-start"> <!-- 좌측 정렬을 위한 text-start 클래스 사용 -->
-          <h2 class="mb-3">계란 토마토 당근 볶음</h2>
-          <img src="recipe_image.jpg" class="img-fluid mb-3" alt="Recipe Image" style="max-width: 100%; height: auto;">
-          
-          <h4>재료</h4>
-          <ul class="list-unstyled">
-            <li>계란 2개</li>
-            <li>토마토 1개</li>
-            <li>당근 1/2개</li>
-            <li>양파 1/4개 (선택 사항)</li>
-            <li>소금, 후추, 올리브 오일</li>
-          </ul>
-          
-          <h4>만드는 법</h4>
-          <p>
-            1. 당근과 양파를 얇게 썰어 준비합니다.<br>
-            2. 팬에 올리브 오일을 두르고 당근과 양파를 볶습니다.<br>
-            3. 토마토와 계란을 추가해 볶습니다.<br>
-            4. 소금과 후추로 간을 맞춥니다.<br>
-            더 많은 텍스트를 추가해도 레시피 섹션이 너비를 유지하면서 아래로 스크롤됩니다. 글자가 많아지면 섹션 높이만 늘어나고, 상단의 버튼들은 고정되어 있습니다.
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-            .<br>.<br>.<br>.<br>
-        </p>
+          <div id="recipe-content"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // URL에서 쿼리 파라미터로 전달된 레시피 데이터를 파싱하는 함수
+    function getRecipeFromURL() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const recipe = params.get('recipe');
+
+            if (recipe) {
+                // 데이터 디코딩 및 JSON 파싱
+                return JSON.parse(decodeURIComponent(recipe));
+            } else {
+                console.error('레시피 데이터가 없습니다.');
+                return null;
+            }
+        } catch (error) {
+            console.error('레시피 데이터 파싱 오류:', error);
+            return null;
+        }
+    }
+
+    // 레시피 데이터를 화면에 표시하는 함수
+    function displayRecipe(recipe) {
+        const recipeContent = document.getElementById('recipe-content');
+
+        if (recipe) {
+            // 재료와 만드는 법 HTML 생성
+            const ingredientsHTML = recipe.ingredients.map(ing => `<li>${ing}</li>`).join('');
+            const instructionsHTML = recipe.instructions.map(step => `<p>${step}</p>`).join('');
+
+            // 콘텐츠 업데이트
+            recipeContent.innerHTML = `
+                <h2>${recipe.title || '레시피 제목 없음'}</h2>
+                <img src="${recipe.image || ''}" alt="레시피 이미지" style="max-width: 100%; height: auto;">
+                <h3>재료</h3>
+                <ul>${ingredientsHTML}</ul>
+                <h3>만드는 법</h3>
+                ${instructionsHTML}
+            `;
+        } else {
+            recipeContent.innerHTML = '<p>레시피 데이터를 찾을 수 없습니다.</p>';
+        }
+    }
+
+    // 페이지 로드 시 레시피 데이터 표시
+    window.onload = function () {
+        const recipe = getRecipeFromURL(); // 올바르게 파싱된 데이터 가져오기
+        console.log('디코딩된 레시피 데이터:', recipe); // 디버깅용 로그
+        if (recipe) {
+            displayRecipe(recipe); // 데이터가 있을 때만 화면에 표시
+        }
+    };
+</script>
+
 </body>
 </html>

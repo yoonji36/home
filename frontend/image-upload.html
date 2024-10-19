@@ -172,6 +172,7 @@
 
         <!-- 이미지 업로드 버튼 -->
         <form action="{% url 'image_upload' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
             <input type="file" class="upload-btn" id="imageUpload" name="image" accept="image/*" required>
             <button type="submit" class="submit-btn">이미지 인식</button>
         </form>

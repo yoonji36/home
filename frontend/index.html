@@ -1,186 +1,429 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>혈당히어로 - 당뇨병 관리</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>혈당히어로 - 홈</title>
 
     <style>
-        body {
-            background-color: #f0f4f9;
-            font-family: 'Arial', sans-serif;
-            color: #333;
+            /* LOTTERIACHAB 폰트 임포트 */
+            @font-face {
+                font-family: 'LOTTERIACHAB';
+                src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/LOTTERIACHAB.woff2') format('woff2');
+                font-weight: normal;
+                font-style: normal;
+            }
+
+            /* DOSSaemmul 폰트 임포트 */
+            @font-face {
+                font-family: 'DOSSaemmul';
+                src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSSaemmul.woff') format('woff');
+                font-weight: normal;
+                font-style: normal;
+            }
+
+            @font-face {
+                font-family: 'YOnepickTTF-Bold';
+                src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/YOnepickTTF-Bold.woff2') format('woff2');
+                font-weight: 700;
+                font-style: normal;
+            }
+
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* 화면 전체 높이 */
+            box-sizing: border-box;
         }
 
-        /* 전체 페이지 레이아웃 */
-        .header-section {
-            background-color: #e3f2fd;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            height: 33vh;
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('{% static "background2.png" %}');
+            background-size: cover;
+            /* background-color: rgb(254, 252, 218);*/
+            height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
+        }
+
+        header {
+            background-color: rgb(60, 173, 143);
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            color: black;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            height: 10vh;
+        }
+
+        .logo a {
+            font-family: 'YOnepickTTF-Bold', sans-serif;
+            font-size: 1.65rem;
+            color: black;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin: 0;
+        }
+
+        nav a {
+            color: black;
+            text-decoration: none;
+            font-family: 'LOTTERIACHAB', sans-serif;
+        }
+
+        nav a:focus, nav a:active, .logo a:focus, .logo a:active {
+            color: white;
+        }
+
+        .logout-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            margin-top: 15vh;
+            gap: 20px;
+            padding: 0 3%;
+        }
+
+        /* 왼쪽 컨테이너 그룹 */
+        .left-containers {
+            display: flex;
+            flex-direction: column; /* 세로로 쌓이게 설정 */
+            width: 50%;
+            gap: 20px; /* 프로필과 로고 컨테이너 사이 간격 */
+        }
+
+        .profile-container, .logo-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-container {
+            height: calc(50vh - 15vh); /* 원래 높이 유지 */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
             justify-content: space-between;
         }
 
-        /* 환영 텍스트 박스 */
-        .welcome-text {
-            font-size: 1.5rem;
-            background-color: #ffffff;
+        .profile-image {
+            width: 30%;
+            height:110%;
+            background-color: #ccc;
+            border-radius: 15px; 
+            margin-left: 30px;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ddd;
-            height: 66%;
-            width: 33%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin: 0 auto; /* 가로 중앙 정렬을 보장 */
+        }
+
+        .profile-img {
+            width: 200px; /* 원하는 너비로 설정 */
+            height: auto; /* 이미지 비율을 유지하면서 높이를 자동 조정 */
+            object-fit: cover; /* 이미지가 컨테이너에 맞게 자르기 */
+        }
+
+        .user-info {
+            font-family: 'DOSSaemmul', sans-serif;
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+
+        .user-basic-info, .user-health-info {
+            margin: 60px 0px;
+        }
+
+        .user-basic-info p {
+            background-color: rgb(254, 252, 218);
+            font-size: 2.6rem;
+            font-weight: bold; /* 레이블에 굵은 글씨체 적용 */
+            border-bottom: 3px double black; /* 밑줄을 대신하여 테두리 아래쪽에 적용 */
+            padding-bottom: 6px; /* 텍스트와 밑줄 사이 간격 */
+        }
+
+        .user-health-info p {
+            margin-top: 1px;
+            margin-bottom: 18px;
+            font-size: 1.5rem;
+        }
+
+        #user-email {
+            margin-left: 15px;
+            font-family: 'DOSSaemmul'; 
+            font-size: 2.5rem;
+            font-weight: normal;
+        }
+
+        #user-bmi, #target-blood-sugar {
+            margin-left: 15px;
+            font-family: 'DOSSaemmul'; /* 다른 글꼴 적용 */
+            font-size: 1.5rem;
+            font-weight: normal;
+        }
+
+        .logo-container {
+            background-color: rgb(254, 252, 218);
+            height: calc(50vh - 8vh); 
+            display: flex;
+            justify-content: flex-start; /* 왼쪽 정렬 */
+            align-items: center;
+            padding-left: 10px; /* 왼쪽 패딩 추가 */
+        }
+
+        .logo-image {
+            flex-shrink: 0;
+        }
+
+        .logo-img {
+            width: 300%; /* 로고 이미지가 컨테이너의 너비를 모두 차지하도록 */
+            max-width: 350px; /* 이미지 최대 크기 설정 (조정 가능) */
+            height: auto; /* 비율 유지 */
+            object-fit: contain; /* 이미지 비율을 유지하며 컨테이너에 맞게 조정 */
+            border-radius: 10px; /* 이미지의 모서리를 둥글게 설정 (선택 사항) */
+            margin-right: 12px;
+        }
+
+        .logo-text-containers {
+            display: flex;
+            flex-direction: column; /* 세로로 쌓이게 설정 */
+            width: 150;
+        }
+
+        .logo-title {
+            font-family: 'YOnepickTTF-Bold', sans-serif;
+            font-size: 1.8rem;
+            color: rgb(60, 173, 143);
+            height: fit-content;
+            text-shadow: -2px 0 #000, 0 2px #000, 2px 0 #000, 0 -2px #000;
+            text-align: center;
+        }
+
+        .logo-text {
+            font-family: 'DOSSaemmul', sans-serif;
+            font-size: 1.15rem;
+            color: black;
+            margin-top: 13px;
+            border: 1px solid black;
+            border: dotted;
+            padding: 10px;
+            background-color:white;
+        }
+                
+        /* 오른쪽 뉴스 컨테이너 */
+        .news-container {
+            width: 50%; /* 화면의 오른쪽 50% 차지 */
+            background-color:  rgb(254, 252, 218);
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            height: 80vh; /* 전체 높이 */
+            overflow-y: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: space-between;
         }
 
-        /* 버튼 스타일 */
-        .welcome-text .buttons {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .welcome-text .buttons a, .welcome-text .buttons button {
-            background-color: #42b883;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 1rem;
-        }
-
-        .welcome-text .buttons a.logout {
-            background-color: #e57373;
-        }
-
-        .recipe-btn {
-            background-color: #ffa726;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-
-        .main-content {
-            padding: 30px 20px;
-            flex: 1; /* 메인 콘텐츠가 남은 공간을 차지하게 설정 */
-        }
-
-        .card-custom {
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-title {
-            color: #42b883;
-            font-size: 1.5rem;
-        }
-
-        .card-text {
-            color: #555;
-        }
-
-        footer {
-            background-color: #f0f4f9;
+        .news-list {
+            list-style: none;
             padding: 20px;
+            margin: 0;
+            flex-grow: 1; /* 남은 공간을 모두 차지하게 설정 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* 리스트 간 간격을 고르게 분배 */
+            overflow-x: hidden; /* 가로 스크롤을 숨김 */
+        }
+
+        .news-list li {
+            margin-bottom: 35px;
+            font-family: 'DOSSaemmul';
+        }
+
+        .news-list a {
+            text-decoration: none;
+            color: black;
+            font-size: 1.3rem;
+            white-space: nowrap;  /* 텍스트를 한 줄로 줄임 */
+            overflow: hidden; /* 컨테이너를 벗어난 텍스트 숨기기 */
+            text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
+            display: block; /* a 태그를 block 요소로 설정 */
+            width: 100%; /* 부모 컨테이너의 너비를 모두 차지하도록 설정 */
+        }
+
+        .news-list a:hover {
+            color: rgb(60, 173, 143);
+        }
+
+
+        .pagination {
             text-align: center;
-            font-size: 0.9rem;
-            color: #888;
+            margin-top: 1px;
+            padding-top: 1px;
+            background-color:  rgb(254, 252, 218);
         }
 
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .welcome-text {
-                width: 50%;
-            }
-
-            .recipe-btn {
-                font-size: 1rem;
-            }
+        .pagination button {
+            padding: 10px;
+            margin: 0 10px;
+            background-color: rgb(60, 173, 143);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
-        @media (max-width: 480px) {
-            .welcome-text {
-                width: 70%;
-            }
-
-            .recipe-btn {
-                font-size: 0.9rem;
-                padding: 10px 20px;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
+
+        .pagination span {
+            font-size: 1.2rem;
+            margin: 0 10px;
+        }
+
     </style>
 </head>
 <body>
+    <header>
+        <div class="logo">
+            <a href="{% url 'main-page' %}">혈당히어로</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'image-upload' %}">레시피 생성</a></li>
+                <li><a href="#">내 기록</a></li>
+                <li><a href="#">내 정보</a></li>
+                <li><a href="#"><img src="#" alt="로그아웃 아이콘" class="logout-icon"></a></li>
+            </ul>
+        </nav>
+    </header>
 
-<!-- 메인 섹션 상단 -->
-<div class="container header-section">
-    <!-- 사용자 환영 메시지 -->
-    <div class="welcome-text">
-        <span>{{ request.user.username }} 님, 환영합니다!</span>
-        <div class="buttons">
-            <a href="/my-profile" class="btn-custom">나의 기록</a>
-            <a href="/logout" class="btn-logout logout">로그아웃</a>
+    <div class="container">
+        <!-- 왼쪽: profile-container와 logo-container가 세로로 배치 -->
+        <div class="left-containers">
+            <div class="profile-container">
+                <div class="profile-image">
+                    <img src= '#'; alt="프로필 이미지" class="profile-img">
+                </div>
+                <div class="user-info">
+                    <div class="user-basic-info">
+                        <p><span class="label">유저정보 : </span><span id="user-email">{{ user_email }}</span></p>
+                    </div>
+                    <div class="user-health-info">
+                        <p><span class="label">나의 BMI : </span><span id="user-bmi">{{ user_bmi|floatformat:2 }}</span></p>
+                        <p><span class="label">목표 혈당 수치 : </span><span id="target-blood-sugar">{{ target_blood_sugar }} <span>mg/dL</span></span></p>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="logo-container">
+                <div class="logo-image">
+                    <img src= '#'; alt="로고 이미지" class="logo-img">
+                </div>
+                <div class="logo-text-container">
+                    <div class="logo-title">
+                        <h1>혈당히어로</h1> <!-- 추가된 텍스트 -->
+                    </div>
+                    <div class="logo-text">
+                        <p>당뇨병 환자를 위한 맞춤형 레시피 추천 플랫폼입니다. 사용자가 업로드한 사진에서 이미지 인식을 통해 재료를 추출하고, 개인의 건강 데이터를 바탕으로 맞춤형 레시피를 제공합니다.</p> <!-- 추가된 텍스트 -->
+                    </div>
+                </div>
+            </div>            
+        </div>
+    
+        <!-- 오른쪽: news-container -->
+        <div class="news-container">
+            <ul class="news-list" id="news-list">
+                {% for news in news_items %}
+                    <li>
+                        <a href="{{ news.link }}" target="_blank">{{ news.title|safe }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="pagination">
+                <button id="prev-page" disabled>이전</button>
+                <span id="page-number">1</span>
+                <button id="next-page">다음</button>
+            </div>
         </div>
     </div>
 
-    <!-- 레시피 만들기 버튼 -->
-    <a href="{% url 'image-upload' %}" class="recipe-btn">레시피 만들기</a>
-</div>
-
-<!-- 메인 콘텐츠 -->
-<div class="container main-content">
-    <!-- 신규 글 카드 -->
-    <div class="card card-custom">
-        <div class="card-body">
-            <h5 class="card-title">신규 글</h5>
-            <p class="card-text">여기에 신규 글 내용을 추가합니다. 최신 글이 이곳에 표시됩니다.</p>
-        </div>
-    </div>
-
-    <!-- 당첨자 뉴스 카드 -->
-    <div class="card card-custom">
-        <div class="card-body">
-            <h5 class="card-title">당첨자 뉴스</h5>
-            <p class="card-text">당첨자 관련 뉴스는 여기에 표시됩니다. 최신 정보를 업데이트하세요.</p>
-        </div>
-    </div>
-</div>
-
-<footer>
-    <p>© 2024 혈당히어로 gotchA! 당뇨병 건강관리 헬스케어 웹사이트 제작</p>
-    <p>all rights reserved.</p>
-</footer>
-
-<!-- JavaScript for redirect -->
-<script>
-    document.getElementById('recipeBtn').addEventListener('click', function() {
-        window.location.href = 'image-upload.html';
-    });
-</script>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        const maxTitleLength = 50; // 뉴스 제목의 최대 길이
+    
+        // 뉴스 리스트를 가져와 표시하는 함수
+        function fetchAndDisplayNews() {
+            fetch(`/fetch-news/?start=${(currentPage - 1) * itemsPerPage + 1}`)
+                .then(response => response.json())
+                .then(newsItems => {
+                    const newsList = document.getElementById('news-list');
+                    newsList.innerHTML = ""; // 기존 내용을 비움
+    
+                    newsItems.forEach(news => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = news.link; // 뉴스의 실제 링크
+                        a.target = "_blank"; // 새로운 탭에서 열기
+                        
+                        // 뉴스 제목 길이를 체크하고 길면 자르기
+                        let title = news.title;
+                        if (title.length > maxTitleLength) {
+                            title = title.substring(0, maxTitleLength) + '...';
+                        }
+    
+                        a.textContent = title; // 뉴스 제목
+                        li.appendChild(a);
+                        newsList.appendChild(li);
+                    });
+    
+                    // 페이지 번호 업데이트
+                    document.getElementById('page-number').textContent = currentPage;
+    
+                    // 이전, 다음 버튼 활성화/비활성화
+                    document.getElementById('prev-page').disabled = currentPage === 1;
+                })
+                .catch(error => console.error('Error fetching news:', error));
+        }
+    
+        // 페이지 넘기기 기능 - 이전 페이지
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchAndDisplayNews();
+            }
+        });
+    
+        // 페이지 넘기기 기능 - 다음 페이지
+        document.getElementById('next-page').addEventListener('click', () => {
+            currentPage++;
+            fetchAndDisplayNews();
+        });
+    
+        // 페이지 처음 로딩 시 뉴스 리스트 표시
+        fetchAndDisplayNews();
+    </script>    
 </body>
 </html>

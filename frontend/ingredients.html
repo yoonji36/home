@@ -193,16 +193,13 @@
     <div class="ingredient-section">
         <div class="ingredient-title">식재료 리스트</div>
         <div class="ingredient-list" id="ingredient-list">
+            {% for ingredient in ingredients %}
             <div class="ingredient-item">
                 <input type="checkbox" onclick="toggleDeleteButton(this)">
-                <span>양파</span>
+                <span>{{ ingredient }}</span>
                 <button class="btn-delete-inline" onclick="deleteIngredient(this)">삭제</button>
             </div>
-            <div class="ingredient-item">
-                <input type="checkbox" onclick="toggleDeleteButton(this)">
-                <span>토마토</span>
-                <button class="btn-delete-inline" onclick="deleteIngredient(this)">삭제</button>
-            </div>
+            {% endfor %}
         </div>
     </div>
 
@@ -258,11 +255,49 @@
         button.parentElement.remove();
     }
 
-    // 레시피 생성 버튼 클릭 시 경고창
-    document.getElementById('recipe-btn').addEventListener('click', function () {
+    // 버튼 클릭 시, 레시피 생성 이벤트 핸들러 
+    document.getElementById('recipe-btn').addEventListener('click', async function () {
         const calorieLimit = document.getElementById('calorie-input').value;
-        alert(`최대 ${calorieLimit} 칼로리의 레시피를 생성합니다.`);
+        const ingredients = Array.from(document.querySelectorAll('.ingredient-item span'))
+            .map(span => span.textContent);
+
+        if (ingredients.length === 0) {
+            alert('최소 하나 이상의 재료를 추가해주세요.');
+            return;
+        }
+
+        try {
+            console.log('재료:', ingredients);
+            console.log('칼로리 제한:', calorieLimit);
+
+            // GPT API 호출
+            const response = await fetch('/mdl/api/recipe/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    calorie: calorieLimit,
+                    ingredients: ingredients,
+                }),
+            });
+
+            if (!response.ok) throw new Error('레시피 생성 실패');
+
+            const data = await response.json();
+            console.log('API 응답 데이터:', data);
+
+            // 응답 데이터를 쿼리스트링으로 인코딩
+            const recipeData = encodeURIComponent(JSON.stringify(data.recipe));
+            
+            // recipes.html로 이동하며 레시피 데이터 전달
+            window.location.href = `/mdl/recipes/?recipe=${recipeData}`;
+        } catch (error) {
+            console.error('레시피 생성 중 오류:', error);
+            alert('레시피 생성 중 문제가 발생했습니다. 다시 시도해주세요.');
+        }
     });
+
 </script>
 
 </body>
