@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 from openai import OpenAI
 import json
+import os
 
-OPENAI_API_KEY = "sk-NV4jShZQu8IzAKWH3rEIwoL7FjS92Cid_7bxNMs6EwT3BlbkFJOt6hSVVbi1IkGxPohBvDld6lUuJ97Yn4IwhpzHMgoA"
+### 꼭 설정하기 ###
+OPENAI_API_KEY = os.getenv("OPEN_API_KEY")
+
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY is not set in the environment.")
 
 def run_chatGPT(messages, model_id):
     print("....simple:model ->", model_id)
