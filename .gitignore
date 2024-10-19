@@ -28,6 +28,8 @@ yarn-error.log*
 # 시스템 파일
 .DS_Store
 Thumbs.db
+bfg.jar
+replacements.txt
 
 # 에디터 설정
 .vscode/
