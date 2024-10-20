@@ -131,6 +131,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join('C:/home/frontend/css'), # ★★★★★
     os.path.join('C:/home/frontend/js'), # ★★★★★
+    os.path.join('C:/home/frontend/static')
 ]
 
 MEDIA_URL = '/media/'
