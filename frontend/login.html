@@ -1,7 +1,7 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
@@ -23,7 +23,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-image: url('{% static "bg_login_signup.jpg" %}'); /* 배경 이미지 설정 */
+            background-image: url('{% static "background1.jpg" %}'); /* 배경 이미지 설정 */
             background-size: cover;
             display: flex;
             justify-content: center;
@@ -81,15 +81,10 @@
 <body>
     <div class="login-container">
         <h1>Login</h1>
-        <form action="/login/" method="POST" onsubmit="return validateForm()">
+        <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
-            {% if messages %}
-                {% for message in messages %}
-                    <p style="color: red;">{{ message }}</p>
-                {% endfor %}
-            {% endif %}
-            <input type="id" name="id" placeholder="아이디" required><br>
-            <input type="password" name="password" placeholder="비밀번호" required><br>
+            <input type="text" id="id" name="id" placeholder="아이디" required autocomplete="username"><br>
+            <input type="password" id="password" name="password" placeholder="비밀번호" required autocomplete="current-password"><br>
             <button type="submit">로그인</button>
         </form>
         <div class="divider">또는</div>

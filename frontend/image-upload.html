@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head lang="ko">
+{% load static %}
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
 <link rel="stylesheet" href="styles.css">
 
 <style>
+    /* LOTTERIACHAB 폰트 임포트 */
     @font-face {
         font-family: 'LOTTERIACHAB';
         src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/LOTTERIACHAB.woff2') format('woff2');
@@ -15,13 +17,25 @@
         font-style: normal;
     }
 
-    .navbar {
-        background-color: rgb(60, 173, 143); /* 메뉴바 색상 */
-        font-family: 'LOTTERIACHAB'; /* 메뉴바에 폰트 적용 */
-        font-size: 1.5rem;
-        font-weight: 100;
-        padding: 10px 20px;
-        height: 10vh;
+    /* DOSSaemmul 폰트 임포트 */
+    @font-face {
+        font-family: 'DOSSaemmul';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSSaemmul.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'YOnepickTTF-Bold';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/YOnepickTTF-Bold.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     header {
@@ -31,14 +45,41 @@
         padding: 10px 20px;
         color: black;
         align-items: center;
+        width: 100%;
+        position: fixed;
+        top: 0;
         height: 10vh;
     }
 
     .logo a {
-        font-family: 'LOTTERIACHAB', sans-serif;
-        font-size: 2.5rem;
+        font-family: 'YOnepickTTF-Bold', sans-serif;
+        font-size: 2rem;
         color: black;
         text-decoration: none;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin: 0;
+    }
+
+    nav a {
+        color: black;
+        text-decoration: none;
+        font-family: 'LOTTERIACHAB', sans-serif;
+        font-size: 1.5rem;
+    }
+
+    nav a:focus, nav a:active, .logo a:focus, .logo a:active {
+        color: white;
+    }
+
+    .logout-icon {
+        width: 30px;
+        height: 30px;
     }
 
     .main {
@@ -47,6 +88,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        margin-top: 90px;
         height: 90vh;
         background-image: url('./images/bg_image-upload.png');; /* 배경색 */ /* 부드러운 헬스케어 색상 */
         color: #333;
@@ -137,46 +179,38 @@
 </head>
 <body>
 
-    <navbar class="navbar" style="padding: 15px;">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white" href="#">
-                <span style="font-size: 1.75em;">혈당히어로</span>
-            </a>
-            <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/' %}text-white{% else %}text-dark{% endif %}" href="/">레시피 생성</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/records/' %}text-dark{% else %}text-white{% endif %}" href="/records/">내 기록</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.path == '/info/' %}text-dark{% else %}text-white{% endif %}" href="/info/">내 정보</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#"><img src="logout.png" alt="로그아웃 아이콘" style="width: 30px;"></a>
-                </li>
-            </ul>
+    <header>
+        <div class="logo">
+            <a href="{% url 'home' %}">혈당히어로</a>
         </div>
-    </navbar>
+        <nav>
+            <ul>
+                <li><a href="{% url 'upload_page' %}">레시피 생성</a></li>
+                <li><a href="{% url 'myrecord' %}">내 기록</a></li>
+                <li><a href="{% url 'myprofile' %}">내 정보</a></li>
+                <li><a href="{% url 'logout' %}"><img src="{% static 'logout.png' %}" alt="로그아웃 아이콘" class="logout-icon"></a></li>
+            </ul>
+        </nav>
+    </header>
 
     <div class="main">
-    <div class="upload-container">
-        <!-- 타이틀 -->
-        <h1>이미지 업로드</h1>
+        <div class="upload-container">
+            <!-- 타이틀 -->
+            <h1>이미지 업로드</h1>
 
-        <!-- 이미지 미리보기 영역 -->
-        <div class="image-preview" id="imagePreview">
-            <p>이미지를 업로드 해주세요</p>
-            <img id="previewImage" alt="Uploaded Image">
+            <!-- 이미지 미리보기 영역 -->
+            <div class="image-preview" id="imagePreview">
+                <p>이미지를 업로드 해주세요</p>
+                <img id="previewImage" alt="Uploaded Image">
+            </div>
+
+            <!-- 이미지 업로드 버튼 -->
+            <form action="{% url 'image_upload' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" class="upload-btn" id="imageUpload" name="image" accept="image/*" required>
+                <button type="submit" class="submit-btn">이미지 인식</button>
+            </form>
         </div>
-
-        <!-- 이미지 업로드 버튼 -->
-        <form action="{% url 'image_upload' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="file" class="upload-btn" id="imageUpload" name="image" accept="image/*" required>
-            <button type="submit" class="submit-btn">이미지 인식</button>
-        </form>
-    </div>
     </div>
 
     <script>

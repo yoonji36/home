@@ -12,7 +12,8 @@
             font-family: 'LOTTERIACHAB';
             src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/LOTTERIACHAB.woff2') format('woff2');
             font-weight: normal;
-            font-style: normal;
+            font-style:
+            normal;
         }
 
         @font-face {
@@ -53,7 +54,7 @@
 
         .logo a {
             font-family: 'YOnepickTTF-Bold', sans-serif;
-            font-size: 1.65rem;
+            font-size: 2rem;
             color: black;
             text-decoration: none;
         }
@@ -70,6 +71,7 @@
             color: black;
             text-decoration: none;
             font-family: 'LOTTERIACHAB', sans-serif;
+            font-size: 1.5rem;
         }
 
         nav a:focus, nav a:active, .logo a:focus, .logo a:active {
@@ -82,17 +84,34 @@
         }
 
         .profile-container {
-            margin-top: 15vh;
+            margin-top: 8vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
         }
 
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            background-color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 170px; /* 원하는 너비로 설정 */
+            height: auto; /* 이미지 비율을 유지하면서 높이를 자동 조정 */
+            object-fit: cover; /* 이미지가 컨테이너에 맞게 자르기 */
+        }
+
         .user-info {
             font-family: 'LOTTERIACHAB', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
         }
 
         .input-container {
@@ -145,7 +164,7 @@
         </div>
         <nav>
             <ul>
-                <li><a href="{% url 'home' %}">레시피 생성</a></li>
+                <li><a href="{% url 'upload_page' %}">레시피 생성</a></li>
                 <li><a href="{% url 'myrecord' %}">내 기록</a></li>
                 <li><a href="{% url 'myprofile' %}">내 정보</a></li>
                 <li><a href="{% url 'logout' %}"><img src="{% static 'logout.png' %}" alt="로그아웃 아이콘" class="logout-icon"></a></li>
@@ -154,27 +173,59 @@
     </header>
 
     <div class="profile-container">
-        <form method="POST" action="{% url 'update_profile' %}">
-            {% csrf_token %}
-            <div class="user-info">
-                아이디: <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
+        <div class="profile-image">
+            <img src= '{% static "profile.png" %}'; alt="프로필 이미지" class="profile-img">
+        </div>
+        <div class="user-info">
+            유저정보: <span id="username">{{ user_email }}</span>
+        </div>
+        <div class="input-container">
+            <div class="input-box">
+                <label for="height">키:</label>
+                <input type="text" id="height" name="height" value="{{ height }}">
             </div>
-            <div class="input-container">
-                <div class="input-box">
-                    <label for="height">키:</label>
-                    <input type="number" id="height" name="height" value="{{ user.height }}">
-                </div>
-                <div class="input-box">
-                    <label for="weight">몸무게:</label>
-                    <input type="number" id="weight" name="weight" value="{{ user.weight }}">
-                </div>
-                <div class="input-box">
-                    <label for="blood-sugar">목표 혈당 수치:</label>
-                    <input type="number" id="blood-sugar" name="blood_sugar" value="{{ user.blood_sugar_target }}">
-                </div>
+            <div class="input-box">
+                <label for="weight">몸무게:</label>
+                <input type="text" id="weight" name="weight" value="{{ weight }}">
             </div>
-            <button type="submit" class="save-button">저장</button>
-        </form>
+            <div class="input-box">
+                <label for="blood-sugar">목표 혈당 수치:</label>
+                <input type="text" id="blood-sugar" name="blood_sugar" value="{{ blood_sugar }}">
+            </div>
+        </div>
+        <button class="save-button" id="saveButton">저장</button>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('saveButton').addEventListener('click', function() {
+                const updatedData = {
+                    height: document.getElementById('height').value,
+                    weight: document.getElementById('weight').value,
+                    blood_sugar: document.getElementById('blood-sugar').value
+                };
+
+                // AJAX 요청으로 서버에 데이터 저장
+                fetch("{% url 'update_profile' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: new URLSearchParams(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('정보가 저장되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('저장에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
 </body>
 </html>

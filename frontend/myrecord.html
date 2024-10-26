@@ -51,7 +51,7 @@
 
         .logo a {
             font-family: 'YOnepickTTF-Bold', sans-serif;
-            font-size: 1.65rem;
+            font-size: 2rem;
             color: black;
             text-decoration: none;
         }
@@ -68,6 +68,7 @@
             color: black;
             text-decoration: none;
             font-family: 'LOTTERIACHAB', sans-serif;
+            font-size: 1.5rem;
         }
 
         nav a:focus, nav a:active, .logo a:focus, .logo a:active {
@@ -155,7 +156,7 @@
         /* 레시피 보관함 제목 스타일 추가 */
         .recipe-title {
             font-family: 'LOTTERIACHAB', sans-serif;
-            font-size: 5rem;
+            font-size: 4rem;
             color: rgb(60, 173, 143);
             text-align: center;
             margin-top: 20px;
@@ -314,7 +315,7 @@
         </div>
         <nav>
             <ul>
-                <li><a href="{% url 'home' %}">레시피 생성</a></li>
+                <li><a href="{% url 'upload_page' %}">레시피 생성</a></li>
                 <li><a href="{% url 'myrecord' %}">내 기록</a></li>
                 <li><a href="{% url 'myprofile' %}">내 정보</a></li>
                 <li><a href="{% url 'logout' %}"><img src="{% static 'logout.png' %}" alt="로그아웃 아이콘" class="logout-icon"></a></li>

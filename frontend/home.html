@@ -1,8 +1,7 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>혈당히어로 - 홈</title>
@@ -63,7 +62,7 @@
 
         .logo a {
             font-family: 'YOnepickTTF-Bold', sans-serif;
-            font-size: 1.65rem;
+            font-size: 2rem;
             color: black;
             text-decoration: none;
         }
@@ -80,6 +79,7 @@
             color: black;
             text-decoration: none;
             font-family: 'LOTTERIACHAB', sans-serif;
+            font-size: 1.5rem;
         }
 
         nav a:focus, nav a:active, .logo a:focus, .logo a:active {
@@ -263,17 +263,16 @@
             text-decoration: none;
             color: black;
             font-size: 1.3rem;
-            white-space: nowrap;  /* 텍스트를 한 줄로 줄임 */
-            overflow: hidden; /* 컨테이너를 벗어난 텍스트 숨기기 */
-            text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
-            display: block; /* a 태그를 block 요소로 설정 */
-            width: 100%; /* 부모 컨테이너의 너비를 모두 차지하도록 설정 */
+            white-space: nowrap;          /* 텍스트를 한 줄로 줄임 */
+            overflow: hidden;             /* 컨테이너를 벗어난 텍스트 숨기기 */
+            text-overflow: ellipsis;      /* 넘치는 텍스트에 ... 표시 */
+            display: block;               /* a 태그를 block 요소로 설정 */
+            width: 100%;                  /* 부모 컨테이너의 너비를 모두 차지하도록 설정 */
         }
 
         .news-list a:hover {
             color: rgb(60, 173, 143);
         }
-
 
         .pagination {
             text-align: center;
@@ -307,14 +306,14 @@
 <body>
     <header>
         <div class="logo">
-            <a href="{% url 'main-page' %}">혈당히어로</a>
+            <a href="{% url 'home' %}">혈당히어로</a>
         </div>
         <nav>
             <ul>
-                <li><a href="{% url 'image-upload' %}">레시피 생성</a></li>
-                <li><a href="#">내 기록</a></li>
-                <li><a href="#">내 정보</a></li>
-                <li><a href="#"><img src="#" alt="로그아웃 아이콘" class="logout-icon"></a></li>
+                <li><a href="{% url 'upload_page' %}">레시피 생성</a></li>
+                <li><a href="{% url 'myrecord' %}">내 기록</a></li>
+                <li><a href="{% url 'myprofile' %}">내 정보</a></li>
+                <li><a href="{% url 'logout' %}"><img src="{% static 'logout.png' %}" alt="로그아웃 아이콘" class="logout-icon"></a></li>
             </ul>
         </nav>
     </header>
@@ -324,7 +323,7 @@
         <div class="left-containers">
             <div class="profile-container">
                 <div class="profile-image">
-                    <img src= '#'; alt="프로필 이미지" class="profile-img">
+                    <img src= '{% static "profile.png" %}'; alt="프로필 이미지" class="profile-img">
                 </div>
                 <div class="user-info">
                     <div class="user-basic-info">
@@ -339,7 +338,7 @@
     
             <div class="logo-container">
                 <div class="logo-image">
-                    <img src= '#'; alt="로고 이미지" class="logo-img">
+                    <img src= '{% static "logoimage.png" %}'; alt="로고 이미지" class="logo-img">
                 </div>
                 <div class="logo-text-container">
                     <div class="logo-title">
@@ -424,6 +423,6 @@
     
         // 페이지 처음 로딩 시 뉴스 리스트 표시
         fetchAndDisplayNews();
-    </script>    
+    </script>
 </body>
 </html>

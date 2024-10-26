@@ -23,7 +23,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-image: url('{% static "bg_login_signup.jpg" %}'); /* 배경 이미지 설정 */
+            background-image: url('{% static "background1.jpg" %}'); /* 배경 이미지 설정 */
             background-size: cover;
             display: flex;
             justify-content: center;
@@ -71,8 +71,8 @@
         <h1>Sign Up</h1>
         <form method="POST" action="{% url 'signup_page' %}">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="아이디" required><br> <!-- 수정 -->
-            <input type="password" name="password" placeholder="비밀번호" required><br>
+            <input type="text" name="id" placeholder="아이디" required autocomplete="id"><br>
+            <input type="password" name="password" placeholder="비밀번호" required autocomplete="new-password"><br>
             <input type="number" name="blood_sugar_target" placeholder="목표 혈당지수" required><br>
             <input type="number" name="height" placeholder="키 (cm)" required><br>
             <input type="number" name="weight" placeholder="몸무게 (kg)" required><br>
