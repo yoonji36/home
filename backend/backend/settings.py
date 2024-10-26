@@ -38,7 +38,6 @@ INSTALLED_APPS = [ # ★★★★★
     'django.contrib.staticfiles',
     'debug_toolbar',
     'app',
-    'main',
     'mdl',
     'login',
 ]
@@ -83,7 +82,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',  # 데이터베이스 백엔드 엔진 (기본은 SQLite3)
-        'NAME': os.path.join(BASE_DIR.parent, 'db.sqlite3'),         # 데이터베이스 파일 경로 (프로젝트 루트에 생성)
+        'NAME': os.path.join(BASE_DIR.parent, 'backend', 'db.sqlite3'),         # 데이터베이스 파일 경로 (프로젝트 루트에 생성)
     }
 }
 
@@ -106,8 +105,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_REDIRECT_URL = 'main-page'  # 로그인 후 리다이렉트될 URL 이름
-LOGOUT_REDIRECT_URL = 'login-page'  # 로그아웃 후 리다이렉트될 URL 이름
+LOGIN_REDIRECT_URL = 'home'  # 로그인 후 리다이렉트될 URL 이름
+LOGOUT_REDIRECT_URL = 'login'  # 로그아웃 후 리다이렉트될 URL 이름
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -124,7 +123,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     r'C:/home/home/frontend/css',  # CSS 경로
@@ -141,5 +140,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'login.User'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Django 기본 인증 백엔드
+]
+
+LOGIN_URL = '/login/'
+
 ACCOUNT_SESSION_REMEMBER = True  # 브라우저를 닫아도 세션기록 유지
 SESSION_COOKIE_AGE = 3600   # 세션 쿠키 유지시간 1시간
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,  # 리다이렉트 가로채기 비활성화
+}

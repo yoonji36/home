@@ -17,18 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path, include
-from django.contrib.auth.views import LogoutView
+from django.urls import path, include, re_path
 from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='django-admin'),  # 'admin' 네임스페이스 지정
     path('__debug__/', include('debug_toolbar.urls')),  # Django Debug Toolbar
     path('mdl/', include('mdl.urls')),  # mdl 앱의 URL 패턴 포함
-    path('', lambda request: redirect('login-page')),  # 기본 경로 -> 로그인 페이지로 리다이렉트
-    path('main/', include('main.urls')),  # 메인페이지 URL
-    path('login/', include('login.urls')),  # 로그인 및 회원가입
-    path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),  # 로그아웃 처리
+    path('login/', include('login.urls')),  # 메인페이지 URL
+    re_path(r'^$', lambda request: redirect('login')),  # /로 접속 시 /login/으로 리디렉션
 ]
 
 if settings.DEBUG:
