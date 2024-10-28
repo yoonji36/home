@@ -221,33 +221,25 @@
             background-color: rgb(50, 150, 130);
         }
 
-       /* 모달 스타일 수정 */
         .modal {
-            display: none;
+            display: none;  /* 기본적으로 숨김 */
             position: fixed;
             z-index: 1;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%); /* 중앙으로 이동 */
-            width: 100%;
-            height: 100%;
+            transform: translate(-50%, -50%);
             background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        /* 모달 스타일 수정 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%); /* 화면 중앙으로 이동 */
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
             height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;  /* 모달이 열릴 때 flex로 설정 */
+            opacity: 1;
         }
 
         /* 모달 내용 스타일 수정 */
@@ -260,6 +252,11 @@
             max-height: 80%; /* 최대 높이를 화면의 80%로 제한 */
             overflow-y: auto; /* 내용이 넘칠 경우 스크롤 추가 */
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        #close-modal {
+            float: right;
+            font-size: 24px;
         }
 
         /* 표의 크기를 모달에 맞게 조정 */
@@ -330,59 +327,12 @@
         </section>
 
         <section class="recipe-storage">
-            <ul>
-                <h2 class="recipe-title">레시피 보관함</h2>
-            
-                <div class="recipe-list-container">
-                    <ul class="recipe-list">
-                        <div class>
-                            <ul class="recipe-list">
-                                <!-- 여기에는 나중에 API를 통해 데이터를 받아와 리스트 항목을 추가할 예정입니다. -->
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                                <li class="recipe-item">
-                                    <input type="checkbox" class="recipe-checkbox">
-                                    <span>레시피 제목 예시</span>
-                                    <button class="delete-button">삭제</button>
-                                </li>
-                            </ul>
-                        </div>
-                    </ul>
-                </div>
-            </ul>
+            <h2 class="recipe-title">레시피 보관함</h2>
+            <div class="recipe-list-container">
+                <ul id="recipe-list" class="recipe-list">
+                <!-- 레시피 리스트 -->
+                </ul>
+            </div>
         </section>
     </main>
 
@@ -428,134 +378,267 @@
         </div>
     </div>
 
+    <!-- 모달 창 -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" style="cursor: pointer;">&times;</span>
+            <h1 id="modal-title"></h1>
+            <h2>재료</h2>
+            <ul id="modal-ingredients"></ul>
+            <h2>만드는 법</h2>
+            <div id="modal-instructions"></div>
+        </div>
+    </div>
+
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var modal = document.getElementById('modal');
-            var currentClickedDate = null; // 현재 클릭된 날짜를 저장
-            var records = {}; // 날짜별 기록을 저장하는 객체
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var modal = document.getElementById('modal');
+        var currentClickedDate = null; // 현재 클릭된 날짜를 저장
+        var records = {}; // 날짜별 기록을 저장하는 객체
 
-            // 페이지 로드 시 모달을 강제로 닫아둠
-            modal.style.display = "none";
+        // 페이지 로드 시 모달을 강제로 닫아둠
+        modal.style.display = "none";
 
-            // FullCalendar 인스턴스 생성
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'ko',
-                height: 'auto',
-                dateClick: function(info) {
-                    currentClickedDate = info.dateStr; // 클릭한 날짜를 저장
+        // FullCalendar 인스턴스 생성
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            height: 'auto',
+            dateClick: function(info) {
+                currentClickedDate = info.dateStr; // 클릭한 날짜를 저장
 
-                    // 클릭한 날짜에 이미 기록이 있는 경우 모달에 데이터 채우기
-                    if (records[currentClickedDate]) {
-                        document.querySelectorAll('.modal-content tbody input').forEach((input, index) => {
-                            input.value = records[currentClickedDate][index] || '';
-                        });
-                    } else {
-                        // 새로운 기록의 경우 입력 필드를 비우기
-                        document.querySelectorAll('.modal-content tbody input').forEach((input) => {
-                            input.value = '';
-                        });
-                    }
-
-                    // 모달 창을 띄움 (날짜 칸을 클릭할 때만)
-                    modal.style.display = "flex";
-                },
-                events: [] // 초기에는 이벤트가 없으므로 빈 배열로 설정
-            });
-
-            calendar.render();
-
-            // 모달 닫기 기능 (모달 바깥 클릭 시 닫힘)
-            window.addEventListener('click', function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            });
-
-            // 등록 버튼 이벤트 핸들러 (저장)
-            document.getElementById('saveBtn').addEventListener('click', function() {
-                var inputs = document.querySelectorAll('.modal-content tbody input');
-                var inputData = Array.from(inputs).map(input => input.value.trim());
-
-                // 현재 클릭된 날짜에 입력 데이터 저장
-                if (currentClickedDate) {
-                    // 입력 데이터가 모두 비어 있지 않은지 확인하여 기록 저장
-                    if (inputData.some(value => value !== '')) {
-                        records[currentClickedDate] = inputData;
-
-                        // 기존 이벤트가 있으면 삭제
-                        var existingEvent = calendar.getEvents().find(event => event.startStr === currentClickedDate);
-                        if (existingEvent) {
-                            existingEvent.remove();
-                        }
-
-                        // 새로운 이벤트 추가
-                        calendar.addEvent({
-                            title: '',
-                            start: currentClickedDate,
-                            allDay: true
-                        });
-
-                        alert('기록이 저장되었습니다.');
-                    } else {
-                        alert('기록이 비어있어 저장되지 않았습니다.');
-                    }
+                // 클릭한 날짜에 이미 기록이 있는 경우 모달에 데이터 채우기
+                if (records[currentClickedDate]) {
+                    document.querySelectorAll('.modal-content tbody input').forEach((input, index) => {
+                        input.value = records[currentClickedDate][index] || '';
+                    });
+                } else {
+                    // 새로운 기록의 경우 입력 필드를 비우기
+                    document.querySelectorAll('.modal-content tbody input').forEach((input) => {
+                        input.value = '';
+                    });
                 }
 
+                // 모달 창을 띄움 (날짜 칸을 클릭할 때만)
+                modal.style.display = "flex";
+            },
+            events: [] // 초기에는 이벤트가 없으므로 빈 배열로 설정
+        });
+
+        calendar.render();
+
+        // 모달 닫기 기능 (모달 바깥 클릭 시 닫힘)
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
                 modal.style.display = "none";
-            });
+            }
+        });
 
-            // 삭제 버튼 이벤트 핸들러
-            document.getElementById('deleteBtn').addEventListener('click', function() {
-                if (currentClickedDate && records[currentClickedDate]) {
-                    delete records[currentClickedDate];
+        // 등록 버튼 이벤트 핸들러 (저장)
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            var inputs = document.querySelectorAll('.modal-content tbody input');
+            var inputData = Array.from(inputs).map(input => input.value.trim());
 
-                    // 해당 날짜의 이벤트 삭제
+            // 현재 클릭된 날짜에 입력 데이터 저장
+            if (currentClickedDate) {
+                // 입력 데이터가 모두 비어 있지 않은지 확인하여 기록 저장
+                if (inputData.some(value => value !== '')) {
+                    records[currentClickedDate] = inputData;
+
+                    // 기존 이벤트가 있으면 삭제
                     var existingEvent = calendar.getEvents().find(event => event.startStr === currentClickedDate);
                     if (existingEvent) {
                         existingEvent.remove();
                     }
 
-                    alert('기록이 삭제되었습니다.');
-                }
+                    // 새로운 이벤트 추가
+                    calendar.addEvent({
+                        title: '',
+                        start: currentClickedDate,
+                        allDay: true
+                    });
 
-                modal.style.display = "none";
-            });
+                    alert('기록이 저장되었습니다.');
+                } else {
+                    alert('기록이 비어있어 저장되지 않았습니다.');
+                }
+            }
+
+            modal.style.display = "none";
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // 모든 체크박스를 가져옴
-            const checkboxes = document.querySelectorAll('.recipe-checkbox');
+        // 삭제 버튼 이벤트 핸들러
+        document.getElementById('deleteBtn').addEventListener('click', function() {
+            if (currentClickedDate && records[currentClickedDate]) {
+                delete records[currentClickedDate];
 
-            // 각 체크박스에 이벤트 리스너 추가
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const listItem = this.parentElement; // 해당 체크박스가 속한 리스트 아이템
-                    const deleteButton = listItem.querySelector('.delete-button');
+                // 해당 날짜의 이벤트 삭제
+                var existingEvent = calendar.getEvents().find(event => event.startStr === currentClickedDate);
+                if (existingEvent) {
+                    existingEvent.remove();
+                }
 
-                    // 체크박스가 체크되면 삭제 버튼 보이기
-                    if (this.checked) {
-                        deleteButton.style.display = 'inline-block';
-                    } else {
-                        deleteButton.style.display = 'none';
+                alert('기록이 삭제되었습니다.');
+            }
+
+            modal.style.display = "none";
+        });
+    });
+
+    // 레시피 보관함
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('recipe-modal');
+        const closeModalButton = document.getElementById('close-modal');
+
+        // 초기 모달 상태 설정
+        modal.style.display = 'none';
+
+        // 레시피 제목 클릭 시 모달 열기
+        function attachRecipeClickEventListeners() {
+            const titles = document.querySelectorAll('.recipe-title-text');
+            titles.forEach(title => {
+                title.addEventListener('click', async function () {
+                    const recipeId = this.dataset.id;
+                    await openRecipeModal(recipeId);  // 모달 열기
+                });
+            });
+        }
+
+        async function openRecipeModal(recipeId) {
+            try {
+                const response = await fetch(`/login/recipe/${recipeId}/`);
+                if (!response.ok) throw new Error('레시피를 불러올 수 없습니다.');
+
+                const recipe = await response.json();
+
+                const ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : [];
+                const instructions = recipe.instructions ? recipe.instructions.split('\n') : [];
+
+                document.getElementById('modal-title').innerText = recipe.title;
+                document.getElementById('modal-ingredients').innerHTML = ingredients
+                    .map(ingredient => `<li>${ingredient}</li>`)
+                    .join('');
+                document.getElementById('modal-instructions').innerHTML = instructions
+                    .map(step => `<p>${step}</p>`)
+                    .join('');
+
+                // 모달 열기
+                modal.classList.add('show');
+            } catch (error) {
+                console.error('레시피 모달 오류:', error);
+            }
+        }
+
+        closeModalButton.addEventListener('click', function () {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        });
+
+        // 모달 바깥 클릭 시 닫기
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            }
+        });
+
+        // 레시피 목록 불러오기
+        async function loadRecipes() {
+            try {
+                const response = await fetch('/login/get_user_recipes/');
+                if (!response.ok) throw new Error('레시피를 불러올 수 없습니다.');
+
+                const data = await response.json();
+                const recipeList = document.getElementById('recipe-list');
+
+                if (data.recipes.length === 0) {
+                    recipeList.innerHTML = '<p>저장된 레시피가 없습니다.</p>';
+                } else {
+                    recipeList.innerHTML = data.recipes.map(recipe => `
+                        <li class="recipe-item">
+                            <input type="checkbox" class="recipe-checkbox">
+                            <span class="recipe-title-text" data-id="${recipe.id}">${recipe.title}</span>
+                            <button class="delete-button" data-id="${recipe.id}">삭제</button>
+                        </li>
+                    `).join('');
+
+                    attachDeleteEventListeners();
+                    attachRecipeClickEventListeners();
+                }
+            } catch (error) {
+                console.error('레시피 로드 오류:', error);
+            }
+        }
+
+        // 삭제 버튼 이벤트 리스너 추가
+        function attachDeleteEventListeners() {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    const recipeId = this.dataset.id;
+                    try {
+                        const response = await fetch(`/login/delete_recipe/${recipeId}/`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': getCSRFToken()  // CSRF 토큰 설정
+                            }
+                        });
+                        if (!response.ok) throw new Error('레시피 삭제 실패');
+                        this.parentElement.remove();  // 레시피 항목 제거
+                    } catch (error) {
+                        console.error('레시피 삭제 오류:', error);
                     }
                 });
             });
+        }
 
-            // 모든 삭제 버튼을 가져옴
-            const deleteButtons = document.querySelectorAll('.delete-button');
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return value;
+            }
+            return '';
+        }
+    });
 
-            // 각 삭제 버튼에 이벤트 리스너 추가
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const listItem = this.parentElement; // 해당 버튼이 속한 리스트 아이템
-                    listItem.remove(); // 리스트 아이템 삭제
-                });
-            });
-        });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // 모든 체크박스를 가져옴
+    //     const checkboxes = document.querySelectorAll('.recipe-checkbox');
+
+    //     // 각 체크박스에 이벤트 리스너 추가
+    //     checkboxes.forEach(checkbox => {
+    //         checkbox.addEventListener('change', function() {
+    //             const listItem = this.parentElement; // 해당 체크박스가 속한 리스트 아이템
+    //             const deleteButton = listItem.querySelector('.delete-button');
+
+    //             // 체크박스가 체크되면 삭제 버튼 보이기
+    //             if (this.checked) {
+    //                 deleteButton.style.display = 'inline-block';
+    //             } else {
+    //                 deleteButton.style.display = 'none';
+    //             }
+    //         });
+    //     });
+
+    //     // 모든 삭제 버튼을 가져옴
+    //     const deleteButtons = document.querySelectorAll('.delete-button');
+
+    //     // 각 삭제 버튼에 이벤트 리스너 추가
+    //     deleteButtons.forEach(button => {
+    //         button.addEventListener('click', function() {
+    //             const listItem = this.parentElement; // 해당 버튼이 속한 리스트 아이템
+    //             listItem.remove(); // 리스트 아이템 삭제
+    //         });
+    //     });
+    // });
     </script>
 </body>
 </html>

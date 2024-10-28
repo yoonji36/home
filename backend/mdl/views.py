@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -6,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .gpt_api import res_recipe
 from .models import Recipe
 from ultralytics import YOLO
-import os, pathlib, torch, json, re
+import os, pathlib, torch, json
 
 # 경로 문제 해결 (PosixPath를 WindowsPath로 변경)
 pathlib.PosixPath = pathlib.WindowsPath
@@ -206,13 +207,23 @@ def save_ingredients_and_calorie(request):
 
 # 레시피 저장
 @csrf_exempt
+@login_required  # 로그인된 사용자만 접근 가능하도록 설정
 def save_recipe(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        recipe = Recipe.objects.create(
-            title=data['title'],
-            ingredients=data['ingredients'],
-            instructions=data['instructions'],
-        )
-        return JsonResponse({'success': True, 'recipe_id': recipe.id}, status=200)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+        title = data.get('title')
+        ingredients = data.get('ingredients')
+        instructions = data.get('instructions')
+
+        # 모든 필드가 존재하는지 확인
+        if title and ingredients and instructions:
+            Recipe.objects.create(
+                title=title,
+                ingredients=ingredients,
+                instructions=instructions,
+                user=request.user  # 현재 로그인된 사용자 저장
+            )
+            return JsonResponse({'message': '레시피가 성공적으로 저장되었습니다!'}, status=201)
+        else:
+            return JsonResponse({'error': '필요한 레시피 정보가 부족합니다.'}, status=400)
+    return JsonResponse({'error': '잘못된 요청 방식입니다.'}, status=405)

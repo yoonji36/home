@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User
+from mdl.models import Recipe
 
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -20,3 +21,8 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('id',)
 
 admin.site.register(User, CustomUserAdmin)
+
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'user', 'created_at')
