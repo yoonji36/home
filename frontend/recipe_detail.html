@@ -6,112 +6,214 @@
     <title>{{ recipe.title }}</title>
     {% load static %}
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
 
-        header {
-            background-color: #2d6a4f;
-            padding: 30px;
-            text-align: center;
-            color: white;
-        }
+    /* LOTTERIACHAB 폰트 임포트 */
+    @font-face {
+        font-family: 'LOTTERIACHAB';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/LOTTERIACHAB.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: bold;
-        }
+    /* DOSSaemmul 폰트 임포트 */
+    @font-face {
+        font-family: 'DOSSaemmul';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSSaemmul.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
 
-        main {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    @font-face {
+        font-family: 'YOnepickTTF-Bold';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/YOnepickTTF-Bold.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+    }
 
-        h2 {
-            color: #2d6a4f;
-            margin-top: 30px;
-        }
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        ul {
-            list-style: disc;
-            margin-left: 20px;
-        }
+body {
+    background-image: url('{% static "recipe_detail.jpg" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh; /* 화면 전체 높이 고정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* 화면 전체 스크롤 비활성화 */
+    font-family: 'LOTTERIACHAB', sans-serif;
+}
 
-        ul li {
-            margin-bottom: 10px;
-        }
+/* Header */
+header {
+    background-color: rgb(60, 173, 143);
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    height: 10vh;
+    z-index: 1000;
+}
 
-        p {
-            line-height: 1.6;
-            margin-top: 20px;
-            font-size: 1.1em;
-        }
+    .navbar {
+        background-color: rgb(60, 173, 143); /* 메뉴바 색상 */
+        font-family: 'LOTTERIACHAB'; /* 메뉴바에 폰트 적용 */
+        font-size: 1.5rem;
+        font-weight: 100;
+        padding: 10px 20px;
+        height: 10vh;
+    }
 
-        img {
-            display: block;
-            margin: 30px auto;
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    .logo a {
+        font-family: 'YOnepickTTF-Bold', sans-serif;
+        font-size: 2rem;
+        color: black;
+        text-decoration: none;
+    }
 
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #888;
-        }
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin: 0;
+    }
 
-        /* Mobile styles */
-        @media (max-width: 600px) {
-            main {
-                padding: 15px;
-            }
+    nav a {
+        color: black;
+        text-decoration: none;
+        font-family: 'LOTTERIACHAB', sans-serif;
+        font-size: 1.5rem;
+    }
 
-            header h1 {
-                font-size: 2em;
-            }
+    nav a:focus, nav a:active, .logo a:focus, .logo a:active {
+        color: white;
+    }
 
-            h2 {
-                font-size: 1.5em;
-            }
-        }
-    </style>
+    .logout-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+/* Container */
+.container {
+    margin-top: calc(10vh + 20px); /* 헤더 높이 + 간격 */
+    width: 90%;
+    max-width: 1200px;
+    height: 70vh; /* 고정된 높이 */
+    overflow-y: auto; /* 내부 스크롤 활성화 */
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    scrollbar-width: thin; /* Firefox에서 스크롤바 얇게 */
+}
+
+/* Custom Scrollbar (for Webkit Browsers) */
+.container::-webkit-scrollbar {
+    width: 8px; /* 스크롤바 너비 */
+}
+
+.container::-webkit-scrollbar-track {
+    background: #f1f1f1; /* 트랙 색상 */
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background-color: rgb(60, 173, 143); /* 스크롤바 색상 */
+    border-radius: 10px;
+    transition: background-color 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(50, 150, 130); /* 호버 시 색상 변경 */
+}
+
+/* Smooth Scrolling */
+.container {
+    scroll-behavior: smooth; /* 부드러운 스크롤 */
+}
+
+
+/* Recipe Section */
+.recipe-section {
+    padding: 20px;
+    border-radius: 8px;
+    height: auto; /* 내용에 따라 자동 조정 */
+}
+
+.recipe-section img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.btn-custom {
+    background-color: rgb(60, 173, 143);
+    border: none;
+    color: black;
+    font-size: 1.25rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: white;
+    color: black;
+}
+
+</style>
 </head>
 <body>
 
-<header>
-    <h1>{{ recipe.title }}</h1>
-</header>
-
-<main>
-    <!-- 이미지 경로를 템플릿에서 직접 사용 -->
-    <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" style="width:300px;height:300px;">
-    <h2>재료</h2>
-    <ul>
-        {% for ingredient in recipe.ingredients %}
-            <li>{{ ingredient }}</li>
-        {% endfor %}
-    </ul>
-
-    <h2>만드는 법</h2>
-    <p>{{ recipe.instructions }}</p>
-
-</main>
-
-<footer>
-    <p>© 2024 혈당히어로 gotchA! 당뇨병 건강관리 헬스케어 웹사이트 제작</p>
-    <p>all rights reserved.</p>
-</footer>
-
-</body>
+    <header>
+        <div class="logo">
+            <a href="{% url 'home' %}">혈당히어로</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'upload_page' %}">레시피 생성</a></li>
+                <li><a href="{% url 'myrecord' %}">내 기록</a></li>
+                <li><a href="{% url 'myprofile' %}">내 정보</a></li>
+                <li>
+                    <a href="{% url 'logout' %}">
+                        <img src="{% static 'logout.png' %}" alt="로그아웃 아이콘" class="logout-icon">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <div class="recipe-section">
+            <h1>{{ recipe.title }}</h1>
+            <img src="{{ recipe.image }}" alt="레시피 이미지">
+            <h2>재료</h2>
+            <ul>
+                {% for ingredient in recipe.ingredients %}
+                    <li>{{ ingredient }}</li>
+                {% endfor %}
+            </ul>
+            <h2>만드는 법</h2>
+            {% for step in recipe.instructions %}
+                <p>{{ step }}</p>
+            {% endfor %}
+            <a href="{% url 'myrecord' %}" class="btn-custom">목록으로 돌아가기</a>
+        </div>
+    </main>
+    
+    </body>
+    
 </html>

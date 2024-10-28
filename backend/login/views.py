@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .forms import SignUpForm
@@ -9,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from mdl.models import Recipe
 import requests
+
+
 
 def signup(request):
     if request.method == 'POST':
@@ -120,6 +122,11 @@ def recipe_detail_view(request, recipe_id):
         return JsonResponse(data, status=200)
     except Recipe.DoesNotExist:
         return JsonResponse({'error': '레시피를 찾을 수 없습니다.'}, status=404)
+
+@login_required
+def recipe_detail(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    return render(request, 'recipe_detail.html', {'recipe': recipe})
 
 @login_required
 def myprofile_view(request):
