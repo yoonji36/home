@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ recipe.title }}</title>
-    {% load static %}
     <style>
 
     /* LOTTERIACHAB 폰트 임포트 */
@@ -49,6 +49,7 @@ body {
     align-items: center;
     overflow: hidden; /* 화면 전체 스크롤 비활성화 */
     font-family: 'LOTTERIACHAB', sans-serif;
+    flex-direction: column;
 }
 
 /* Header */
@@ -56,23 +57,14 @@ header {
     background-color: rgb(60, 173, 143);
     display: flex;
     justify-content: space-between;
-    padding: 10px 20px;
     align-items: center;
+    padding: 10px 20px;
     width: 100%;
+    height: 10vh;
     position: fixed;
     top: 0;
-    height: 10vh;
     z-index: 1000;
 }
-
-    .navbar {
-        background-color: rgb(60, 173, 143); /* 메뉴바 색상 */
-        font-family: 'LOTTERIACHAB'; /* 메뉴바에 폰트 적용 */
-        font-size: 1.5rem;
-        font-weight: 100;
-        padding: 10px 20px;
-        height: 10vh;
-    }
 
     .logo a {
         font-family: 'YOnepickTTF-Bold', sans-serif;
@@ -119,24 +111,24 @@ header {
     scrollbar-width: thin; /* Firefox에서 스크롤바 얇게 */
 }
 
-/* Custom Scrollbar (for Webkit Browsers) */
+/* 귀여운 스크롤바 스타일 (웹킷 전용) */
 .container::-webkit-scrollbar {
-    width: 8px; /* 스크롤바 너비 */
+    width: 10px;
 }
 
 .container::-webkit-scrollbar-track {
-    background: #f1f1f1; /* 트랙 색상 */
+    background-color: #f9f9f9;
     border-radius: 10px;
 }
 
 .container::-webkit-scrollbar-thumb {
-    background-color: rgb(60, 173, 143); /* 스크롤바 색상 */
+    background-color: rgb(255, 182, 193); /* 연한 핑크 */
     border-radius: 10px;
-    transition: background-color 0.3s ease; /* 부드러운 전환 효과 */
+    border: 2px solid #fff; /* 트랙과의 간격 */
 }
 
 .container::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(50, 150, 130); /* 호버 시 색상 변경 */
+    background-color: rgb(255, 105, 180); /* 진한 핑크 */
 }
 
 /* Smooth Scrolling */
@@ -145,17 +137,18 @@ header {
 }
 
 
-/* Recipe Section */
+ /* 레시피 섹션 스타일 */
 .recipe-section {
-    padding: 20px;
-    border-radius: 8px;
-    height: auto; /* 내용에 따라 자동 조정 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'serif';
+    font-size: 1.25rem;
+    padding: 30px;
 }
 
-.recipe-section img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 20px;
+.text-content {
+    font-family: 'serif';
 }
 
 .btn-custom {
@@ -164,14 +157,13 @@ header {
     color: black;
     font-size: 1.25rem;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
 .btn-custom:hover {
-    background-color: white;
-    color: black;
+    background-color: rgb(50, 150, 130);
 }
 
 </style>
@@ -198,21 +190,80 @@ header {
     
     <main class="container">
         <div class="recipe-section">
-            <h1>{{ recipe.title }}</h1>
-            <img src="{{ recipe.image }}" alt="레시피 이미지">
-            <h2>재료</h2>
-            <ul>
-                {% for ingredient in recipe.ingredients %}
-                    <li>{{ ingredient }}</li>
-                {% endfor %}
-            </ul>
-            <h2>만드는 법</h2>
-            {% for step in recipe.instructions %}
-                <p>{{ step }}</p>
-            {% endfor %}
+            <h1 style="text-align: center; font-size:2rem;">{{ recipe.title }}</h1>
+            <br>
+            <div class="text-contents">
+                <h2>재료</h2><br>
+                    {% for ingredient in recipe.ingredients %}
+                    {{ ingredient }}
+                    {% endfor %}
+                <br><br><br>
+                <h2>만드는 법</h2><br>
+                    {% for step in recipe.instructions %}
+                        {{ step }}
+                    {% endfor %}
+            </div>
             <a href="{% url 'myrecord' %}" class="btn-custom">목록으로 돌아가기</a>
         </div>
     </main>
+    
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', fetchRecipeData);
+
+        // CSRF 토큰 가져오기 함수
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') return value;
+            }
+            return '';
+        }
+
+        async function fetchRecipeData() {
+            const recipeId = "{{ recipe_id }}";
+
+            try {
+                const response = await fetch(`/login/api/recipe/${recipeId}/`);
+                if (!response.ok) throw new Error('레시피를 불러올 수 없습니다.');
+
+                const recipe = await response.json();
+                displayRecipe(recipe);
+            } catch (error) {
+                console.error('Error fetching recipe:', error);
+                document.getElementById('recipe-content').innerHTML =
+                    '<p>레시피를 불러오는 중 오류가 발생했습니다.</p>';
+            }
+        }
+
+        function displayRecipe(recipe) {
+            const recipeContent = document.getElementById('recipe-content');
+
+            // 만약 ingredients가 문자열로 반환된다면 JSON 파싱 수행
+            let ingredients = recipe.ingredients;
+            if (typeof ingredients === 'string') {
+                ingredients = JSON.parse(ingredients);
+            }
+
+            const ingredientsHTML = ingredients.map(ingredient => 
+                `<li>${ingredient}</li>`).join('');
+
+            const instructionsHTML = recipe.instructions.map((step, index) => 
+                `<p>${index + 1}. ${step}</p>`).join('');
+
+            recipeContent.innerHTML = `
+                <h1>${recipe.title}</h1>
+                <h3>재료</h3>
+                <ul>${ingredientsHTML}</ul>
+                <h3>만드는 법</h3>
+                ${instructionsHTML}
+            `;
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script> -->
     
     </body>
     

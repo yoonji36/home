@@ -190,42 +190,61 @@
             </div>
             <div class="input-box">
                 <label for="blood-sugar">목표 혈당 수치:</label>
-                <input type="text" id="blood-sugar" name="blood_sugar" value="{{ blood_sugar }}">
+                <input type="text" id="blood-sugar-target" name="blood_sugar_target" value="{{ blood_sugar_target }}">
             </div>
         </div>
         <button class="save-button" id="saveButton">저장</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('saveButton').addEventListener('click', function() {
-                const updatedData = {
-                    height: document.getElementById('height').value,
-                    weight: document.getElementById('weight').value,
-                    blood_sugar: document.getElementById('blood-sugar').value
-                };
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
-                // AJAX 요청으로 서버에 데이터 저장
-                fetch("{% url 'update_profile' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: new URLSearchParams(updatedData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert('정보가 저장되었습니다.');
-                        location.reload();
-                    } else {
-                        alert('저장에 실패했습니다.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        });
-    </script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('saveButton').addEventListener('click', function () {
+        const updatedData = {
+            height: document.getElementById('height').value,
+            weight: document.getElementById('weight').value,
+            blood_sugar_target: document.getElementById('blood-sugar-target').value
+        };
+
+        fetch("{% url 'update_profile' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: new URLSearchParams(updatedData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                alert('정보가 저장되었습니다!');
+                location.reload();
+            } else {
+                alert('저장에 실패했습니다.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+
+
+</script>
 </body>
 </html>

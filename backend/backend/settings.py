@@ -156,3 +156,5 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,  # 리다이렉트 가로채기 비활성화
 }
+
+DEBUG = True

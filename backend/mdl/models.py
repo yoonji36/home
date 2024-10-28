@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from django.conf import settings
 
@@ -17,3 +18,8 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title  # 레시피 제목으로 표현
     
+    def save(self, *args, **kwargs):
+        # Python 객체를 JSON 문자열로 변환
+        self.ingredients = json.dumps(self.ingredients)
+        self.instructions = json.dumps(self.instructions)
+        super().save(*args, **kwargs)

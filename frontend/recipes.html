@@ -92,6 +92,8 @@
   .recipe-section {
     background-color: white;
     padding: 20px;
+    border-style: groove;
+    border-color: rgba(128, 128, 128, 0.5); /* 회색 (50% 투명도) */
     border-radius: 8px;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -99,6 +101,11 @@
     width: 100%; /* 너비 고정 */
     max-width: 1000px; /* 최대 너비 */
     height: auto; /* 높이는 내용에 따라 확장 */
+  }
+
+  .recipe-content {
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .btn-custom {
     background-color: rgb(60, 173, 143);
@@ -165,15 +172,14 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="recipe-section text-start">
-          <div id="recipe-content">
-            <h1>{{ recipe.title }}</h1>
-            <img src="{{ recipe.image }}" alt="레시피 이미지" style="max-width: 100%; height: auto;">
+          <div class="recipe-content" id="recipe-content">
+            <h1 style="text-align: center;">{{ recipe.title }}</h1><br><br>
             <h2>재료</h2>
             <ul>
               {% for ingredient in recipe.ingredients %}
                 <li>{{ ingredient }}</li>
               {% endfor %}
-            </ul>
+            </ul><br><br>
             <h2>만드는 법</h2>
             {% for step in recipe.instructions %}
               <p>{{ step }}</p>
@@ -252,52 +258,53 @@
 
   // 레시피 데이터를 화면에 표시하는 함수
   function displayRecipe(recipe) {
-      const recipeContent = document.getElementById('recipe-content');
-      
-      // 재료 목록 생성 (문자열과 객체 타입 모두 처리)
-      const ingredientsHTML = recipe.ingredients.map(ingredient => {
+    const recipeContent = document.getElementById('recipe-content');
+
+    // 재료 목록 생성 (문자열과 객체 타입 모두 처리)
+    const ingredientsHTML = recipe.ingredients.map(ingredient => {
         if (typeof ingredient === 'string') {
             return `<li>${ingredient}</li>`;
         } else if (typeof ingredient === 'object') {
             // item/name 및 quantity/amount를 우선적으로 인식
-            const itemName = ingredient.item || ingredient.name || '재료 없음';
-            const quantityOrAmount = ingredient.quantity || ingredient.amount || '수량 미정';
-            return `<li>${itemName}: ${quantityOrAmount}</li>`;
+            const itemName = ingredient.name || ingredient.item || '재료 없음';
+            const quantityOrAmount = ingredient.amount || ingredient.quantity || '수량 미정';
+            return `<li><strong>${itemName}</strong>: ${quantityOrAmount}</li>`;
         } else {
             return `<li>재료 없음: 수량 미정</li>`;
         }
-      }).join('');
+    }).join('');
 
-      // 만드는 법 HTML 생성 (객체와 문자열 모두 처리)
-      const instructionsHTML = recipe.instructions.map((step, index) => {
-          let content;
+    // 만드는 법 HTML 생성 (객체와 문자열 모두 처리)
+    const instructionsHTML = recipe.instructions.map((step, index) => {
+        let content;
 
-          // 객체일 경우 단계와 설명을 처리
-          if (typeof step === 'object' && step !== null) {
-              content = step.text || '단계 설명 없음';  // 'text' 필드 인식
-          } else if (typeof step === 'string') {
-              content = step;
-          } else {
-              content = '알 수 없는 단계';
-          }
+        // 객체일 경우 단계와 설명을 처리
+        if (typeof step === 'object' && step !== null) {
+            content = step.text || '단계 설명 없음';  // 'text' 필드 인식
+        } else if (typeof step === 'string') {
+            content = step;
+        } else {
+            content = '알 수 없는 단계';
+        }
 
-          // 숫자가 이미 포함된 경우 추가하지 않음
-          if (/^\d+[\.\)]/.test(content.trim())) {
-              return `<p>${content}</p>`;  // 이미 번호가 있는 경우
-          } else {
-              return `<p>${index + 1}. ${content}</p>`;  // 번호 추가
-          }
-      }).join('');
+        // 숫자가 이미 포함된 경우 추가하지 않음
+        if (/^\d+[\.\)]/.test(content.trim())) {
+            return `<p>${content}</p>`;  // 이미 번호가 있는 경우
+        } else {
+            return `<p>${index + 1}. ${content}</p>`;  // 번호 추가
+        }
+    }).join('');
 
-      // 콘텐츠 업데이트
-      recipeContent.innerHTML = `
+    // 콘텐츠 업데이트
+    recipeContent.innerHTML = `
         <h2>${recipe.title || '레시피 제목 없음'}</h2><br>
         <h3>재료</h3>
         <ul>${ingredientsHTML}</ul>
         <h3>만드는 법</h3>
         ${instructionsHTML}
-      `;
+    `;
   }
+
 
   // "레시피 다시 생성" 버튼 클릭 이벤트 핸들러
   document.getElementById('recipe-regen').addEventListener('click', async function () {

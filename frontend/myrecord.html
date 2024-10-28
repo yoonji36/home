@@ -141,6 +141,36 @@
             background-color: #f0f0f0;
         }
 
+        .recipe-checkbox {
+            margin-right: 10px;
+        }
+
+        .recipe-title-text {
+            flex-grow: 1; /* 레시피 제목이 가능한 공간을 차지하도록 */
+            text-align: left;
+        }
+
+        .delete-button {
+            display: none; /* 기본적으로 숨겨진 상태 */
+            position: absolute;
+            right: 10px; /* 레시피 아이템의 오른쪽 끝에 위치 */
+            background-color: rgb(60, 173, 143);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .recipe-checkbox:checked + .recipe-title-text + .delete-button {
+            display: inline-block; /* 체크박스가 선택되었을 때 삭제 버튼 보이기 */
+        }
+
+        .delete-button:hover {
+            background-color: rgb(50, 150, 130);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -200,9 +230,15 @@
     </section>
 
     <section class="recipe-storage">
-        <h2 class="recipe-title" style="font-family: 'LOTTERIACHAB';">레시피 보관함</h2>
+        <h2 class="recipe-title" style="font-family: 'YOnepickTTF-Bold';">레시피 보관함</h2>
         <div class="recipe-list-container">
-            <ul id="recipe-list"></ul>
+            <ul id="recipe-list">
+                {% for recipe in recipes %}
+                    <li>
+                        <a href="{% url 'recipe_detail' recipe.id %}">{{ recipe.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </section>
 </main>
@@ -247,13 +283,18 @@
     </div>
 </div>
 
+<!-- CSRF 토큰 숨김 필드 -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script>
+    // 캘린더&레시피 실행
     document.addEventListener('DOMContentLoaded', function () {
         initializeCalendar();
         loadRecipes();
     });
 
+    // 캘린더
     function initializeCalendar() {
         const calendarEl = document.getElementById('calendar');
         const modal = document.getElementById('modal');
@@ -266,6 +307,8 @@
             dateClick: function (info) {
                 currentClickedDate = info.dateStr;
                 modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.alignItems = 'center';
             }
         });
 
@@ -294,6 +337,8 @@
         });
     }
 
+
+    // 레시피
     async function loadRecipes() {
         try {
             const response = await fetch('/login/get_user_recipes/');
@@ -307,8 +352,10 @@
             } else {
                 recipeList.innerHTML = data.recipes.map(recipe => `
                     <li class="recipe-item">
+                        <input type="checkbox" class="recipe-checkbox">
                         <a href="/login/recipe_detail/${recipe.id}/">${recipe.title}</a>
-                        <span>${new Date(recipe.created_at).toLocaleDateString()}</span>
+                        {% csrf_token %}
+                        <button class="delete-button">삭제</button>
                     </li>
                 `).join('');
             }
@@ -316,6 +363,49 @@
             console.error('레시피 로드 오류:', error);
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const recipeList = document.getElementById('recipe-list');
+
+        // 부모 요소에 이벤트 위임으로 삭제 버튼 클릭 이벤트 처리
+        recipeList.addEventListener('click', async function (event) {
+            if (event.target.classList.contains('delete-button')) {
+                const listItem = event.target.parentElement;
+                const recipeId = listItem.querySelector('a').href.split('/').slice(-2, -1)[0]; // 레시피 ID 추출
+
+                try {
+                    // 서버에 삭제 요청 전송
+                    const response = await fetch('/login/delete_recipe/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': getCSRFToken(), // CSRF 토큰 포함
+                        },
+                        body: new URLSearchParams({ recipe_id: recipeId }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        listItem.remove(); // 성공 시 DOM에서 제거
+                    } else {
+                        console.error('삭제 실패:', data.error);
+                    }
+                } catch (error) {
+                    console.error('서버 요청 오류:', error);
+                }
+            }
+        });
+
+        // CSRF 토큰을 가져오는 함수 (쿠키에서 추출)
+        function getCSRFToken() {
+            return document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+        }
+    });
+
 </script>
 
 </body>

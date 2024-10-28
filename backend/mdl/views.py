@@ -22,6 +22,7 @@ model = torch.hub.load(
 )
 
 CLASS_NAME_MAPPING = {
+    'bean_sprouts' : '콩나물',
     'eggplant': '가지',
     'potato': '감자',
     'sweet_potato': '고구마',
@@ -145,7 +146,7 @@ def generate_recipe(request):
                 raise ValueError(f"응답에 필요한 키가 없습니다. 응답 키: {recipe_data.keys()}")
 
             # 세션에 레시피 저장
-            request.session['recipe'] = recipe_data
+            request.session['recipe'] = json.dumps(recipe_data, ensure_ascii=False)
 
             return JsonResponse({"recipe": recipe_data}, status=200)
 
@@ -163,10 +164,14 @@ def recipes_page(request):
     # 세션에서 레시피 데이터를 가져옴
     recipe_data = request.session.get('recipe')
     
-    if not recipe_data:
-        return redirect('upload_page')  # 레시피가 없으면 업로드 페이지로 이동
+    if recipe_data:
+        # JSON 문자열을 파싱합니다.
+        recipe_data = json.loads(recipe_data)
+    else:
+        return redirect('upload_page')
 
     return render(request, 'recipes.html', {'recipe': recipe_data})
+
 
 # 레시피 재료 세션정보
 def get_ingredients_from_session(request):
@@ -178,6 +183,7 @@ def get_ingredients_from_session(request):
         'ingredients': ingredients,
         'calorieLimit': calorie_limit
     })
+
 
 # 레시피 세션정보
 def get_recipe_from_session(request):

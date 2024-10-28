@@ -5,12 +5,14 @@ from .forms import SignUpForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import requests, json, mdl.models
 from .models import User
-from mdl.models import Recipe
-import requests
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 def signup(request):
     if request.method == 'POST':
@@ -51,18 +53,18 @@ def login_view(request):
 @login_required
 def home_view(request):
     user = request.user
-    news_items = fetch_news_items()
     context = {
-        'user_email': user.id,
+        'user_email': user.id,  # 사용자 아이디 (이메일로 사용할 경우)
         'user_bmi': user.weight / ((user.height / 100) ** 2) if user.height and user.weight else None,
-        'target_blood_sugar': user.blood_sugar_target,
-        'news_items': news_items,
+        'target_blood_sugar': user.blood_sugar_target
     }
     return render(request, 'home.html', context)
 
-def fetch_news_items():
-    client_id = "AMvmbd0mAWudLgFjBOzz"
-    client_secret = "5KFOSHoXWw"
+@login_required
+def home_view(request):
+    # 네이버 뉴스 API 설정
+    client_id = "AMvmbd0mAWudLgFjBOzz"  # 네이버 클라이언트 ID
+    client_secret = "5KFOSHoXWw"  # 네이버 클라이언트 시크릿
     url = "https://openapi.naver.com/v1/search/news.json"
     headers = {
         "X-Naver-Client-Id": client_id,
@@ -70,8 +72,8 @@ def fetch_news_items():
     }
     params = {
         "query": "당뇨",
-        "display": 6,
-        "sort": "date",
+        "display": 7,  # 뉴스 5개만 가져오기
+        "sort": "date",  # 최신 순으로 정렬
     }
 
     response = requests.get(url, headers=headers, params=params)
@@ -81,14 +83,43 @@ def fetch_news_items():
         data = response.json()
         news_items = data.get("items", [])
 
-    return news_items
+    context = {
+        'user_email': request.user.id,
+        'user_bmi': request.user.weight / ((request.user.height / 100) ** 2) if request.user.height and request.user.weight else None,
+        'target_blood_sugar': request.user.blood_sugar_target,
+        'news_items': news_items,  # 뉴스 데이터 전달
+    }
+
+    return render(request, 'home.html', context)
 
 @csrf_exempt
 def fetch_news(request):
     if request.method == "GET":
-        news_items = fetch_news_items()
-        return JsonResponse(news_items, safe=False)
-    return JsonResponse({"error": "Invalid request"}, status=400)
+        client_id = "AMvmbd0mAWudLgFjBOzz"  # 네이버 클라이언트 ID
+        client_secret = "5KFOSHoXWw"  # 네이버 클라이언트 시크릿
+        query = "당뇨"
+        display = 7
+        start = int(request.GET.get("start", 1))  # 요청에서 시작 위치를 가져옴
+
+        url = "https://openapi.naver.com/v1/search/news.json"
+        headers = {
+            "X-Naver-Client-Id": client_id,
+            "X-Naver-Client-Secret": client_secret,
+        }
+        params = {
+            "query": query,
+            "display": display,
+            "start": start,
+            "sort": "date",
+        }
+
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            news_items = data.get("items", [])
+            return JsonResponse(news_items, safe=False)
+        else:
+            return JsonResponse({"error": "Failed to fetch news"}, status=400)
 
 def logout_view(request):
     logout(request)
@@ -107,11 +138,13 @@ def myrecord_view(request):
 
 @login_required
 def get_user_recipes(request):
+    Recipe = mdl.models.Recipe
     recipes = Recipe.objects.filter(user=request.user).values('id', 'title')
     return JsonResponse({'recipes': list(recipes)}, status=200)
 
 @login_required
 def recipe_detail_view(request, recipe_id):
+    Recipe = mdl.models.Recipe
     try:
         recipe = Recipe.objects.get(id=recipe_id, user=request.user)
         data = {
@@ -125,6 +158,7 @@ def recipe_detail_view(request, recipe_id):
 
 @login_required
 def recipe_detail(request, recipe_id):
+    Recipe = mdl.models.Recipe
     recipe = get_object_or_404(Recipe, id=recipe_id)
     return render(request, 'recipe_detail.html', {'recipe': recipe})
 
@@ -135,21 +169,23 @@ def myprofile_view(request):
         'user_email': user.id,
         'height': user.height,
         'weight': user.weight,
-        'blood_sugar': user.blood_sugar_target,
+        'blood_sugar_target': user.blood_sugar_target,
     }
     return render(request, 'myprofile.html', context)
 
 @login_required
 def update_profile(request):
     if request.method == 'POST':
-        data = request.POST
-        user = request.user
-        
-        user.height = data.get('height')
-        user.weight = data.get('weight')
-        user.blood_sugar_target = data.get('blood_sugar_target')
-        user.save()
-        messages.success(request, '프로필이 업데이트되었습니다.')
-        return redirect('myprofile')  # 업데이트 후 프로필 페이지로 리다이렉트
-
-    return redirect('myprofile')  # GET 요청 시 프로필 페이지로 리다이렉트
+        try:    # 데이터를 처리하는 로직 (예: 데이터베이스 업데이트)
+            data = request.POST
+            user = request.user
+            
+            user.height = data.get('height')
+            user.weight = data.get('weight')
+            user.blood_sugar_target = data.get('blood_sugar_target')
+            user.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
+    redirect('{% url myprofile %} ')  # GET 요청 시 프로필 페이지로 리다이렉트
+    return JsonResponse({'status': 'fail', 'message': 'Invalid request method'}, status=400)
